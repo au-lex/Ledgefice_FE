@@ -80,9 +80,7 @@ function localTierToInput(tier: LocalTier, sort_order: number): AmountTierInput 
   };
 }
 
-function deptName(departments: DepartmentWithStats[], id: string) {
-  return departments.find((d) => d.id === id)?.name ?? "Select department";
-}
+
 
 // ─── Stat Card ────────────────────────────────────────────────────────────────
 

@@ -26,6 +26,7 @@ export interface VoucherFieldValue {
 }
 
 export interface ApprovalHistoryEntry {
+  role: string;
   id: string;
   created_at: string;
   voucher_id: string;

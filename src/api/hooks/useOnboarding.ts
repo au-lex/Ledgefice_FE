@@ -14,6 +14,7 @@ export interface OnboardingOwner {
 }
 
 export interface OnboardingResponse {
+  checkout_link: any;
   message: string;
   org: Org;
   owner: OnboardingOwner;

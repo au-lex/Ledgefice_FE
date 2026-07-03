@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import {
   ShieldTick,
   SearchNormal1,
@@ -486,14 +486,14 @@ export default function ApprovalInboxPage() {
 
   const handleApprove = (id: string) => {
     approveMutation.mutate(
-      { id, payload: { role: MY_ROLE } },
+      { id },
       { onSuccess: (updated) => setSelectedVoucher(updated) }
     );
   };
 
   const handleReject = (id: string, reason: string) => {
     rejectMutation.mutate(
-      { id, payload: { role: MY_ROLE, reason } },
+      { id, payload: { reason } },
       { onSuccess: (updated) => setSelectedVoucher(updated) }
     );
   };

@@ -1,4 +1,4 @@
-import React, { type ReactNode } from "react";
+import  { type ReactNode } from "react";
 import Sidebar, { type SidebarUser } from "./Sidebar";
 import { useMe, useLogout } from "../api/hooks/useAuth";
 

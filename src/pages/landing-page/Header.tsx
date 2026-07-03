@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import { HambergerMenu, CloseCircle, Receipt21 } from "iconsax-react";
 import Logo from "../../components/Logo";
 

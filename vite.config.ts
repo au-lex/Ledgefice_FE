@@ -12,7 +12,7 @@ export default defineConfig({
   server: {
     host: true,
     allowedHosts: [
-      "hurricane-conducting-atom-always.trycloudflare.com"
+      "calculate-greg-carlos-net.trycloudflare.com"
     ]
   }
 })

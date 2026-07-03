@@ -1,5 +1,5 @@
-import React from "react";
-import { Setting2, User, Camera, Trash } from "iconsax-react";
+
+import { User, Camera, Trash } from "iconsax-react";
 import Layout from "../../../layout/Layout";
 
 export default function ProfilePage() {

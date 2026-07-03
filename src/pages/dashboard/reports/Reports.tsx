@@ -417,7 +417,7 @@ export default function ReportsPage() {
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
                         <Pie data={deptSpend} cx="50%" cy="50%" innerRadius={38} outerRadius={62} paddingAngle={3} dataKey="value">
-                          {deptSpend.map((entry, i) => (
+                          {deptSpend.map((_entry, i) => (
                             <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} stroke="transparent" />
                           ))}
                         </Pie>
@@ -466,7 +466,7 @@ export default function ReportsPage() {
                     <YAxis tick={{ fill: "#52525b", fontSize: 10 }} axisLine={false} tickLine={false} />
                     <Tooltip content={<BarTooltip />} cursor={{ fill: "#27272a" }} />
                     <Bar dataKey="count" radius={[4, 4, 0, 0]}>
-                      {APPROVAL_TURNAROUND.map((entry, i) => (
+                      {APPROVAL_TURNAROUND.map((_entry, i) => (
                         <Cell key={i} fill={i === 0 ? "#a1a1aa" : i === 1 ? "#71717a" : i === 2 ? "#52525b" : "#3f3f46"} />
                       ))}
                     </Bar>

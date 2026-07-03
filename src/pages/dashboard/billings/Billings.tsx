@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import {
   EmptyWallet,
   Receipt21,
@@ -9,7 +9,7 @@ import {
   CloseCircle,
   Add,
   ArrowRight2,
-  SecuritySafe,
+
   Flash,
   Buildings2,
   Calendar
