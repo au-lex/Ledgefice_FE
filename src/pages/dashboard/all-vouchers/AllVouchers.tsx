@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
 import {
   Receipt21,
-  Add,
+ 
   SearchNormal1,
-  CloseCircle,
+
   FolderOpen,
   Sort,
 } from "iconsax-react";

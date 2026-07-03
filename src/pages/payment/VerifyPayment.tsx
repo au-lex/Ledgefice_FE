@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { useSearchParams, useParams, Link } from "react-router-dom";
 import { TickCircle, CloseCircle, Clock } from "iconsax-react";
 import api from "../../api/lib/axios";

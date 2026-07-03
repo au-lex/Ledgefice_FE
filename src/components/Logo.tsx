@@ -1,4 +1,4 @@
-import { ForwardItem, ReceiptText } from "iconsax-react";
+import { ReceiptText } from "iconsax-react";
 
 
 export default function Logo() {

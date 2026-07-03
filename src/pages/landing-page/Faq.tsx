@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Add, Minus, MessageQuestion } from "iconsax-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────

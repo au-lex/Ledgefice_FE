@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
-  Home2,
+ 
   Receipt21,
   TickCircle,
   ClipboardText,
@@ -11,7 +11,7 @@ import {
   Chart21,
   DocumentText1,
   CloseCircle,
-  LogoutCurve,
+
   Setting2,
   Logout,
   People,
@@ -58,7 +58,7 @@ export interface SidebarUser {
   permissions: UserPermissions;
 }
 
-type PermissionKey = keyof UserPermissions | null;
+// type PermissionKey = keyof UserPermissions | null;
 
 const NAV_LINKS = [
   { label: "My Vouchers",     icon: Receipt21,     href: "/voucher",         permission: "can_create" },
@@ -96,8 +96,8 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
     return links
       .filter(
         (link) =>
-          link.permission === null ||
-          user.permissions[link.permission as PermissionKey]
+     link.permission === null ||
+user.permissions[link.permission as keyof UserPermissions]
       )
       .map((link) => {
         const Icon = link.icon;

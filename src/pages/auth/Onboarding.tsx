@@ -97,8 +97,7 @@ export default function OnboardingPage() {
             },
             {
                 onSuccess: (data) => {
-                    // Paid plans return a Nomba checkout_link — send the owner there to pay.
-                    // Starter plan returns an empty string, so go straight to login.
+             
                     if (data.checkout_link) {
                         window.location.href = data.checkout_link;
                     } else {

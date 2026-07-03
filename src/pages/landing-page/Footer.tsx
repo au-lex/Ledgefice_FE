@@ -1,5 +1,5 @@
 import React from "react";
-import { Receipt21, Sms, Location, Instagram, Youtube } from "iconsax-react";
+import {  Sms, Location, Instagram, Youtube } from "iconsax-react";
 import Logo from "../../components/Logo";
 
 // ─── Types ────────────────────────────────────────────────────────────────────

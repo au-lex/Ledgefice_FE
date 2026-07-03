@@ -29,6 +29,8 @@ import LoginPage from "./pages/auth/Login";
 import OnboardingPage from "./pages/auth/Onboarding";
 import ProfilePage from "./pages/dashboard/my-profile/Profile";
 import PaymentStatusPage from "./pages/payment/VerifyPayment";
+import ForgotPasswordPage from "./pages/auth/ForgotPsw";
+import ResetPasswordPage from "./pages/auth/ResetPsw";
 
 
 
@@ -40,6 +42,8 @@ const router = createBrowserRouter([
 
       { path: "/login", element: <LoginPage /> },
       { path: "/onboarding", element: <OnboardingPage /> },
+      { path: "/reset-password", element: <ResetPasswordPage /> },
+      { path: "/forgot-password", element: <ForgotPasswordPage/> },
 
       { path: "/payment/:status", element: <PaymentStatusPage /> },
 

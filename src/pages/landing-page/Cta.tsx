@@ -1,5 +1,5 @@
-import React from "react";
-import { ArrowRight, Receipt21, ShieldTick, ChartSquare } from "iconsax-react";
+
+import { ArrowRight, } from "iconsax-react";
 
 
 
