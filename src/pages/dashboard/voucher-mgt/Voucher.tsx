@@ -20,6 +20,7 @@ import {
 } from "../../../api/hooks/useVouchers";
 import { useListVoucherTypes, type VoucherType } from "../../../api/hooks/useVoucherTypes";
 import { VoucherCard } from "../../../components/ui/VouchersCard";
+import Loader from "../../../components/ui/Loader";
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
@@ -91,7 +92,7 @@ function NewVoucherModal({ onClose, voucherTypes, isLoadingTypes }: NewVoucherMo
           <div>
             <label className="block text-xs font-medium text-zinc-400 mb-2">Issue Type</label>
             {isLoadingTypes ? (
-              <p className="text-xs text-zinc-500">Loading types...</p>
+              <Loader />
             ) : voucherTypes.length === 0 ? (
               <div className="flex flex-col items-center justify-center gap-3 border border-dashed border-zinc-800 rounded-lg py-6 px-4 bg-zinc-950/40">
                 <p className="text-xs text-zinc-500 text-center">
@@ -296,7 +297,7 @@ export default function VouchersPage() {
             {/* Cards */}
             {isLoading ? (
               <div className="py-24 flex items-center justify-center">
-                <p className="text-sm text-zinc-500">Loading your vouchers...</p>
+             <Loader />
               </div>
             ) : filtered.length === 0 ? (
               <div className="py-16 sm:py-24 flex flex-col items-center justify-center text-center px-4 border border-dashed border-zinc-800 rounded-xl bg-zinc-900/20">

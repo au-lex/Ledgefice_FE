@@ -23,6 +23,7 @@ import {
   type Voucher,
   type VoucherFieldValue,
 } from "../../../api/hooks/useVouchers";
+import Loader from "../../../components/ui/Loader";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -587,7 +588,9 @@ export default function ApprovalInboxPage() {
 
             {/* List */}
             {isLoading ? (
-              <div className="py-24 text-center text-sm text-gray-400 dark:text-zinc-500">Loading vouchers…</div>
+              <section className="h-32 flex items-center justify-center bg-black">
+                <Loader />
+              </section>
             ) : displayedVouchers.length === 0 ? (
               <div className="py-24 flex flex-col items-center justify-center text-center">
                 <Filter size={32} className="text-gray-300 dark:text-zinc-700 mb-4" color="currentColor" />

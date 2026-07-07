@@ -21,6 +21,7 @@ import {
   type CustomField,
   type CustomFieldInput,
 } from "../../../api/hooks/useVoucherTypes";
+import Loader from "../../../components/ui/Loader";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -305,7 +306,7 @@ export default function VoucherTypesPage() {
           {/* Loading */}
           {isLoading && (
             <div className="text-sm text-gray-400 dark:text-zinc-500 text-center py-16">
-              Loading voucher types…
+      <Loader />
             </div>
           )}
 

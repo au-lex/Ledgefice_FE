@@ -15,6 +15,7 @@ import {
   type VoucherListFilters,
 } from "../../../api/hooks/useVouchers";
 import { VoucherCard } from "../../../components/ui/VouchersCard";
+import Loader from "../../../components/ui/Loader";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -119,7 +120,7 @@ export default function AllVouchersPage() {
               <h1 className="text-sm font-medium text-gray-900 dark:text-zinc-100">All Vouchers Directory</h1>
 
               {isFetching && !isLoading && (
-                <span className="text-[10px] text-gray-400 dark:text-zinc-500">refreshing…</span>
+         <Loader />
               )}
             </div>
 
@@ -205,7 +206,7 @@ export default function AllVouchersPage() {
             {/* Loading state */}
             {isLoading && (
               <div className="py-24 flex flex-col items-center justify-center text-center border border-dashed border-gray-300 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-900/20">
-                <p className="text-sm font-medium text-gray-900 dark:text-zinc-300">Loading vouchers…</p>
+                <Loader />
               </div>
             )}
 

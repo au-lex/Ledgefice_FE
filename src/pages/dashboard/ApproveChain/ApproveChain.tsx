@@ -26,6 +26,7 @@ import {
 } from "../../../api/hooks/useApprovalChains";
 import { useListVoucherTypes, type VoucherType } from "../../../api/hooks/useVoucherTypes";
 import { useListDepartments, type DepartmentWithStats } from "../../../api/hooks/useDepartments";
+import Loader from "../../../components/ui/Loader";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -633,9 +634,7 @@ export default function ApprovalChainsPage() {
 
           {/* Loading */}
           {isLoading && (
-            <div className="text-sm text-gray-400 dark:text-zinc-500 text-center py-16">
-              Loading approval chains…
-            </div>
+     <Loader />
           )}
 
           {/* Empty */}
@@ -655,21 +654,7 @@ export default function ApprovalChainsPage() {
           )}
 
           {/* Departments Legend */}
-          <div className="bg-white dark:bg-zinc-900/30 border border-gray-200 dark:border-zinc-800/50 rounded-xl p-6">
-            <h3 className="text-[10px] font-medium text-gray-500 dark:text-zinc-500 uppercase tracking-widest mb-4">
-              Departments Reference
-            </h3>
-            <div className="flex flex-wrap gap-2.5">
-              {departments.map((dept) => (
-                <div key={dept.id} className="flex items-center gap-1.5 px-3 py-1.5 border rounded-lg text-[11px] font-medium bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 border-gray-200 dark:border-zinc-700">
-                  {dept.name}
-                </div>
-              ))}
-              {departments.length === 0 && (
-                <p className="text-xs text-gray-400 dark:text-zinc-500">No departments created yet.</p>
-              )}
-            </div>
-          </div>
+
         </div>
 
         {/* Modals */}

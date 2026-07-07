@@ -59,11 +59,11 @@ export interface SidebarUser {
   permissions: UserPermissions;
 }
 
-// type PermissionKey = keyof UserPermissions | null;
+
 
 const NAV_LINKS = [
   { label: "My Vouchers", icon: Receipt21, href: "/voucher", permission: "can_create" },
-  { label: "Pending Approvals", icon: TickCircle, href: "/approvals", permission: "can_approve", badge: 3 },
+  { label: "Pending Approvals", icon: TickCircle, href: "/approvals", permission: "can_approve"},
   { label: "All Vouchers", icon: ClipboardText, href: "/all-vouchers", permission: "can_view_all" },
   { label: "Reports", icon: Chart21, href: "/reports", permission: "can_view_reports" },
   { label: "Voucher Types", icon: Layer, href: "/voucher-types", permission: "can_view_voucher_types" },
