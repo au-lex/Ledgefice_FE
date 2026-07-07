@@ -113,7 +113,7 @@ function StepConnector() {
 
 export default function FlowSection() {
   return (
-    <div className="px-4 sm:px-6 py-20 max-w-7xl mx-auto">
+    <div id="how-it-works" className="px-4 sm:px-6 py-20 max-w-7xl mx-auto">
       <div className="text-center max-w-lg mx-auto mb-14">
         <div className="inline-flex items-center gap-2 bg-zinc-900 border border-zinc-800/60 rounded-full px-4 py-1.5 mb-6">
           <Send2 size={12} color="currentColor" className="text-zinc-400" />

@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import {
   Receipt21,
- 
+
   SearchNormal1,
 
   FolderOpen,
@@ -32,10 +32,10 @@ function useDebouncedValue<T>(value: T, delay = 400) {
 
 function StatCard({ label, value, sub }: { label: string; value: string | number; sub: string }) {
   return (
-    <div className="bg-white dark:bg-pri border border-gray-200 dark:border-zinc-800/80 rounded-xl p-5 flex flex-col justify-between shadow-sm">
-      <p className="text-xs text-gray-500 dark:text-zinc-400 font-medium mb-3">{label}</p>
-      <p className="text-2xl font-medium text-gray-900 dark:text-zinc-50 tracking-tight">{value}</p>
-      <p className="text-[11px] text-gray-400 dark:text-zinc-500 mt-2">{sub}</p>
+    <div className="bg-white bg-pri border border-gray-200 border-zinc-800/80 rounded-xl p-5 flex flex-col justify-between shadow-sm">
+      <p className="text-xs text-gray-500 text-zinc-400 font-medium mb-3">{label}</p>
+      <p className="text-2xl font-medium text-gray-900 text-zinc-50 tracking-tight">{value}</p>
+      <p className="text-[11px] text-gray-400 text-zinc-500 mt-2">{sub}</p>
     </div>
   );
 }
@@ -108,19 +108,19 @@ export default function AllVouchersPage() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-50 dark:bg-zinc-950 text-gray-900 dark:text-zinc-300 font-sans pb-16 selection:bg-gray-200 selection:text-gray-900 dark:selection:bg-zinc-800 dark:selection:text-zinc-100">
+      <div className="min-h-screen bg-pri text-gray-900 text-zinc-300 font-sans pb-16 selection:bg-gray-200 selection:text-gray-900 selection:bg-zinc-800 selection:text-zinc-100">
 
         {/* Top Navigation Bar */}
-        <div className="border-b border-gray-200 dark:border-zinc-800/80 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md sticky top-0 z-10">
+        <div className="border-b border-gray-200 border-zinc-800/80 bg-white/80 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-10">
           <div className="px-6 h-16 flex items-center justify-between max-w-7xl mx-auto">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-gray-100 dark:bg-zinc-900 rounded-lg border border-gray-200 dark:border-zinc-800/80 shadow-sm text-gray-600 dark:text-zinc-400">
+              <div className="p-2 bg-gray-100 bg-zinc-900 rounded-lg border border-gray-200 border-zinc-800/80 shadow-sm text-gray-600 text-zinc-400">
                 <Receipt21 size={18} color="currentColor" />
               </div>
-              <h1 className="text-sm font-medium text-gray-900 dark:text-zinc-100">All Vouchers Directory</h1>
+              <h1 className="text-sm font-medium text-gray-900 text-zinc-100">All Vouchers Directory</h1>
 
               {isFetching && !isLoading && (
-         <Loader />
+                <Loader />
               )}
             </div>
 
@@ -139,10 +139,10 @@ export default function AllVouchersPage() {
 
           <div className="space-y-6">
             {/* Filtering & Controls */}
-            <div className="flex flex-col lg:flex-row gap-4 items-center justify-between bg-white dark:bg-zinc-900/30 p-2 rounded-xl border border-gray-200 dark:border-zinc-800/50 shadow-sm">
+            <div className="flex flex-col lg:flex-row gap-4 items-center justify-between bg-white bg-zinc-900/30 p-2 rounded-xl border border-gray-200 border-zinc-800/50 shadow-sm">
 
               <div className="relative w-full lg:w-80 flex-shrink-0">
-                <SearchNormal1 size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-zinc-500" color="currentColor" />
+                <SearchNormal1 size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-zinc-500" color="currentColor" />
                 <input
                   value={searchInput}
                   onChange={(e) => {
@@ -150,7 +150,7 @@ export default function AllVouchersPage() {
                     setPage(1);
                   }}
                   placeholder="Search by title, description, ID..."
-                  className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg pl-10 pr-4 py-2 text-sm text-gray-900 dark:text-zinc-200 placeholder-gray-400 dark:placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:focus:ring-zinc-700 transition-all"
+                  className="w-full bg-gray-50 bg-zinc-900 border border-gray-200 border-zinc-800 rounded-lg pl-10 pr-4 py-2 text-sm text-gray-900 text-zinc-200 placeholder-gray-400 placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-zinc-700 transition-all"
                 />
               </div>
 
@@ -158,7 +158,7 @@ export default function AllVouchersPage() {
                 <select
                   value={deptFilter}
                   onChange={(e) => resetToFirstPage(setDeptFilter)(e.target.value)}
-                  className="bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-xs text-gray-700 dark:text-zinc-300 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:focus:ring-zinc-700 appearance-none cursor-pointer hover:bg-gray-100 dark:hover:bg-zinc-800/50 transition-colors"
+                  className="bg-gray-50 bg-zinc-900 border border-gray-200 border-zinc-800 rounded-lg px-3 py-2 text-xs text-gray-700 text-zinc-300 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-zinc-700 appearance-none cursor-pointer hover:bg-gray-100 hover:bg-zinc-800/50 transition-colors"
                 >
                   <option value="">Department: All</option>
                   {departmentOptions.map(([id, name]) => (
@@ -169,7 +169,7 @@ export default function AllVouchersPage() {
                 <select
                   value={statusFilter}
                   onChange={(e) => resetToFirstPage(setStatusFilter)(e.target.value as VoucherStatus | "")}
-                  className="bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-xs text-gray-700 dark:text-zinc-300 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:focus:ring-zinc-700 appearance-none cursor-pointer hover:bg-gray-100 dark:hover:bg-zinc-800/50 transition-colors"
+                  className="bg-gray-50 bg-zinc-900 border border-gray-200 border-zinc-800 rounded-lg px-3 py-2 text-xs text-gray-700 text-zinc-300 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-zinc-700 appearance-none cursor-pointer hover:bg-gray-100 hover:bg-zinc-800/50 transition-colors"
                 >
                   <option value="">Status: All</option>
                   <option value="pending">Pending</option>
@@ -181,7 +181,7 @@ export default function AllVouchersPage() {
                 <select
                   value={typeFilter}
                   onChange={(e) => resetToFirstPage(setTypeFilter)(e.target.value)}
-                  className="bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg px-3 py-2 text-xs text-gray-700 dark:text-zinc-300 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:focus:ring-zinc-700 appearance-none cursor-pointer hover:bg-gray-100 dark:hover:bg-zinc-800/50 transition-colors hidden sm:block"
+                  className="bg-gray-50 bg-zinc-900 border border-gray-200 border-zinc-800 rounded-lg px-3 py-2 text-xs text-gray-700 text-zinc-300 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-zinc-700 appearance-none cursor-pointer hover:bg-gray-100 hover:bg-zinc-800/50 transition-colors hidden sm:block"
                 >
                   <option value="">Type: All</option>
                   {typeOptions.map(([id, name]) => (
@@ -189,12 +189,12 @@ export default function AllVouchersPage() {
                   ))}
                 </select>
 
-                <div className="relative flex items-center bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg px-3 py-2 focus-within:ring-1 focus-within:ring-gray-400 dark:focus-within:ring-zinc-700 transition-all hover:bg-gray-100 dark:hover:bg-zinc-800/50 cursor-pointer">
-                  <Sort size={14} className="text-gray-400 dark:text-zinc-500 mr-2" color="currentColor" />
+                <div className="relative flex items-center bg-gray-50 bg-zinc-900 border border-gray-200 border-zinc-800 rounded-lg px-3 py-2 focus-within:ring-1 focus-within:ring-gray-400 focus-within:ring-zinc-700 transition-all hover:bg-gray-100 hover:bg-zinc-800/50 cursor-pointer">
+                  <Sort size={14} className="text-gray-400 text-zinc-500 mr-2" color="currentColor" />
                   <select
                     value={sortParam}
                     onChange={(e) => resetToFirstPage(setSortParam)(e.target.value as VoucherSort)}
-                    className="bg-transparent text-xs text-gray-700 dark:text-zinc-300 focus:outline-none appearance-none cursor-pointer pr-2"
+                    className="bg-transparent text-xs text-gray-700 text-zinc-300 focus:outline-none appearance-none cursor-pointer pr-2"
                   >
                     <option value="newest">Newest</option>
                     <option value="oldest">Oldest</option>
@@ -205,16 +205,16 @@ export default function AllVouchersPage() {
 
             {/* Loading state */}
             {isLoading && (
-              <div className="py-24 flex flex-col items-center justify-center text-center border border-dashed border-gray-300 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-900/20">
+              <div className="py-24 flex flex-col items-center justify-center text-center border border-dashed border-gray-300 border-zinc-800 rounded-xl bg-white bg-zinc-900/20">
                 <Loader />
               </div>
             )}
 
             {/* Error state */}
             {isError && !isLoading && (
-              <div className="py-24 flex flex-col items-center justify-center text-center border border-dashed border-red-300 dark:border-red-800 rounded-xl bg-red-50 dark:bg-red-950/10">
-                <p className="text-sm font-medium text-red-700 dark:text-red-400">Failed to load vouchers</p>
-                <p className="text-xs text-red-500 dark:text-red-500 mt-1">
+              <div className="py-24 flex flex-col items-center justify-center text-center border border-dashed border-red-300 border-red-800 rounded-xl bg-red-50 bg-red-950/10">
+                <p className="text-sm font-medium text-red-700 text-red-400">Failed to load vouchers</p>
+                <p className="text-xs text-red-500 text-red-500 mt-1">
                   {error?.response?.data?.message || error?.message || "Something went wrong"}
                 </p>
               </div>
@@ -222,10 +222,10 @@ export default function AllVouchersPage() {
 
             {/* Empty state */}
             {!isLoading && !isError && vouchers.length === 0 && (
-              <div className="py-24 flex flex-col items-center justify-center text-center border border-dashed border-gray-300 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-900/20">
-                <FolderOpen size={32} className="text-gray-400 dark:text-zinc-600 mb-4" color="currentColor" />
-                <p className="text-sm font-medium text-gray-900 dark:text-zinc-300">No issues found</p>
-                <p className="text-xs text-gray-500 dark:text-zinc-500 mt-1">Adjust your filters or search term to find what you're looking for.</p>
+              <div className="py-24 flex flex-col items-center justify-center text-center border border-dashed border-gray-300 border-zinc-800 rounded-xl bg-white bg-zinc-900/20">
+                <FolderOpen size={32} className="text-gray-400 text-zinc-600 mb-4" color="currentColor" />
+                <p className="text-sm font-medium text-gray-900 text-zinc-300">No issues found</p>
+                <p className="text-xs text-zinc-500 mt-1">Adjust your filters or search term to find what you're looking for.</p>
               </div>
             )}
 
@@ -241,21 +241,21 @@ export default function AllVouchersPage() {
             {/* Pagination */}
             {meta && meta.total_pages > 1 && (
               <div className="flex items-center justify-between pt-2">
-                <p className="text-xs text-gray-500 dark:text-zinc-500">
+                <p className="text-xs text-zinc-500">
                   Page {meta.page} of {meta.total_pages} · {meta.total_items} total
                 </p>
                 <div className="flex gap-2">
                   <button
                     disabled={page <= 1}
                     onClick={() => setPage((p) => Math.max(1, p - 1))}
-                    className="px-3 py-1.5 text-xs rounded-md border border-gray-200 dark:border-zinc-800 text-gray-600 dark:text-zinc-400 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-zinc-800/50 transition-colors"
+                    className="px-3 py-1.5 text-xs rounded-md border border-gray-200 border-zinc-800 text-gray-600 text-zinc-400 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100 hover:bg-zinc-800/50 transition-colors"
                   >
                     Previous
                   </button>
                   <button
                     disabled={page >= meta.total_pages}
                     onClick={() => setPage((p) => Math.min(meta.total_pages, p + 1))}
-                    className="px-3 py-1.5 text-xs rounded-md border border-gray-200 dark:border-zinc-800 text-gray-600 dark:text-zinc-400 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-zinc-800/50 transition-colors"
+                    className="px-3 py-1.5 text-xs rounded-md border border-gray-200 border-zinc-800 text-gray-600 text-zinc-400 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100 hover:bg-zinc-800/50 transition-colors"
                   >
                     Next
                   </button>

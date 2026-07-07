@@ -27,27 +27,27 @@ export const STATUS_CONFIG: Record<
 > = {
   pending: {
     label: "Pending",
-    dot: "bg-gray-400 dark:bg-zinc-400",
-    text: "text-gray-700 dark:text-zinc-300",
-    bg: "bg-gray-100 dark:bg-zinc-800",
+    dot: "bg-zinc-400",
+    text: "text-zinc-300",
+    bg: "bg-zinc-800",
   },
   approved: {
     label: "Approved",
-    dot: "bg-gray-900 dark:bg-zinc-100",
-    text: "text-gray-900 dark:text-zinc-100",
-    bg: "bg-gray-200 dark:bg-zinc-800",
+    dot: "bg-zinc-100",
+    text: "text-zinc-100",
+    bg: "bg-zinc-800",
   },
   rejected: {
     label: "Rejected",
     dot: "bg-red-500",
-    text: "text-red-600 dark:text-red-400",
-    bg: "bg-red-50 dark:bg-red-500/10 border-red-100 dark:border-red-500/20",
+    text: "text-red-400",
+    bg: "bg-red-500/10 border-red-500/20",
   },
   draft: {
     label: "Draft",
-    dot: "bg-gray-300 dark:bg-zinc-600",
-    text: "text-gray-500 dark:text-zinc-400",
-    bg: "bg-gray-50 dark:bg-zinc-900",
+    dot: "bg-zinc-600",
+    text: "text-zinc-400",
+    bg: "bg-zinc-900",
   },
 };
 
@@ -79,7 +79,7 @@ export function StatusBadge({ status }: { status: VoucherStatus }) {
   const cfg = STATUS_CONFIG[status];
   return (
     <div
-      className={`flex items-center gap-1.5 px-2 py-1 rounded-md border border-gray-200 dark:border-zinc-700/50 ${cfg.bg}`}
+      className={`flex items-center gap-1.5 px-2 py-1 rounded-md border border-zinc-700/50 ${cfg.bg}`}
     >
       <div className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
       <span className={`text-[10px] font-medium leading-none ${cfg.text}`}>
@@ -101,7 +101,7 @@ function FieldValueDisplay({ fv }: { fv: VoucherFieldValue }) {
         target="_blank"
         rel="noopener noreferrer"
         onClick={(e) => e.stopPropagation()}
-        className="text-xs text-zinc-100 dark:text-blue-400 underline underline-offset-2 truncate hover:opacity-80 transition-opacity"
+        className="text-xs text-blue-400 underline underline-offset-2 truncate hover:opacity-80 transition-opacity"
       >
         View file ↗
       </a>
@@ -110,14 +110,14 @@ function FieldValueDisplay({ fv }: { fv: VoucherFieldValue }) {
 
   if (type === "date" && fv.value) {
     return (
-      <span className="text-sm text-gray-900 dark:text-zinc-200">
+      <span className="text-sm text-zinc-200">
         {formatDate(fv.value)}
       </span>
     );
   }
 
   return (
-    <span className="text-sm text-gray-900 dark:text-zinc-200 break-words">
+    <span className="text-sm text-zinc-200 break-words">
       {fv.value || "—"}
     </span>
   );
@@ -125,14 +125,14 @@ function FieldValueDisplay({ fv }: { fv: VoucherFieldValue }) {
 
 export function VoucherFields({ fieldValues }: { fieldValues?: VoucherFieldValue[] }) {
   if (!fieldValues?.length) {
-    return <p className="text-xs text-gray-400 dark:text-zinc-500 italic">No fields submitted</p>;
+    return <p className="text-xs text-zinc-500 italic">No fields submitted</p>;
   }
 
   return (
     <div className="grid grid-cols-1 gap-x-4 gap-y-2.5">
       {fieldValues.map((fv) => (
         <div key={fv.id} className="flex flex-col min-w-0">
-          <span className="text-[10px] font-medium text-gray-400 dark:text-zinc-500 uppercase tracking-wide truncate">
+          <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wide truncate">
             {fv.field?.label ?? "Field"}
           </span>
           <FieldValueDisplay fv={fv} />
@@ -164,10 +164,10 @@ export function VoucherCard({
   const approvalSteps = getApprovalSteps(v);
 
   return (
-    <div className="bg-white dark:bg-zinc-900/80 border border-gray-200 dark:border-zinc-800/80 hover:border-gray-300 dark:hover:border-zinc-700 rounded-xl p-5 transition-all group flex flex-col gap-5 relative shadow-sm hover:shadow-md">
+    <div className="bg-zinc-900/80 border border-zinc-800/80 hover:border-zinc-700 rounded-xl p-5 transition-all group flex flex-col gap-5 relative shadow-sm hover:shadow-md">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <span className="text-[11px] font-mono text-gray-500 dark:text-zinc-400 tracking-wide bg-gray-100 dark:bg-zinc-950 px-2 py-0.5 rounded border border-gray-200 dark:border-zinc-800">
+        <span className="text-[11px] font-mono text-zinc-400 tracking-wide bg-zinc-950 px-2 py-0.5 rounded border border-zinc-800">
           {v.code}
         </span>
         <StatusBadge status={v.status} />
@@ -175,7 +175,7 @@ export function VoucherCard({
 
       {/* Type + field values */}
       <div>
-        <h3 className="text-base font-semibold text-gray-900 dark:text-zinc-100 leading-snug mb-3">
+        <h3 className="text-base font-semibold text-zinc-100 leading-snug mb-3">
           {v.voucher_type?.name ?? "Voucher"}
         </h3>
 
@@ -183,17 +183,17 @@ export function VoucherCard({
 
         <div className="flex flex-wrap gap-2 mt-3">
           {v.department && (
-            <div className="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-md text-[10px] text-gray-600 dark:text-zinc-400">
+            <div className="inline-flex items-center gap-1 px-2 py-1 bg-pri border border-zinc-800 rounded-md text-[10px] text-zinc-400">
               <Building size={10} color="currentColor" />
               {v.department.name}
             </div>
           )}
-          <div className="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-md text-[10px] text-gray-600 dark:text-zinc-400">
+          <div className="inline-flex items-center gap-1 px-2 py-1 bg-pri border border-zinc-800 rounded-md text-[10px] text-zinc-400">
             <Calendar size={10} color="currentColor" />
             {formatDate(v.created_at)}
           </div>
           {v.duplicate_flag?.is_duplicate && !v.duplicate_flag.dismissed_at && (
-            <span className="inline-flex px-2 py-1 border border-red-200 dark:border-red-500/30 bg-red-50 dark:bg-red-500/10 rounded-md text-[10px] font-medium text-red-600 dark:text-red-400">
+            <span className="inline-flex px-2 py-1 border border-red-500/30 bg-red-500/10 rounded-md text-[10px] font-medium text-red-400">
               Possible duplicate
             </span>
           )}
@@ -202,42 +202,40 @@ export function VoucherCard({
 
       {/* Approval flow */}
       {approvalSteps.length > 0 && (
-        <div className="bg-gray-50 dark:bg-zinc-950/50 rounded-lg p-3.5 border border-gray-200 dark:border-zinc-800/50">
+        <div className="bg-pri/50 rounded-lg p-3.5 border border-zinc-800/50">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-[10px] font-medium text-gray-500 dark:text-zinc-500 uppercase tracking-widest">
+            <p className="text-[10px] font-medium text-zinc-500 uppercase tracking-widest">
               Approval Flow
             </p>
-            <span className="text-[10px] text-gray-500 dark:text-zinc-500 font-mono">
+            <span className="text-[10px] text-zinc-500 font-mono">
               {v.amount_tier?.label ?? `Tier ${v.tier}`}
             </span>
           </div>
-          <div className="flex flex-col gap-2 border-l border-gray-200 dark:border-zinc-800 ml-1.5 pl-3.5 relative">
+          <div className="flex flex-col gap-2 border-l border-zinc-800 ml-1.5 pl-3.5 relative">
             {approvalSteps.map((step) => (
               <div key={step.id} className="flex items-center justify-between relative">
                 <div className="flex items-center gap-2.5">
                   <div
-                    className={`w-2 h-2 rounded-full absolute -left-[19px] border-2 border-white dark:border-zinc-900 ${
-                      step.done
-                        ? "bg-gray-800 dark:bg-zinc-400"
-                        : step.active
-                        ? "bg-gray-400 dark:bg-zinc-100 shadow-[0_0_8px_rgba(255,255,255,0.2)]"
-                        : "bg-gray-200 dark:bg-zinc-700"
-                    }`}
+                    className={`w-2 h-2 rounded-full absolute -left-[19px] border-2 border-zinc-900 ${step.done
+                      ? "bg-zinc-400"
+                      : step.active
+                        ? "bg-zinc-100 shadow-[0_0_8px_rgba(255,255,255,0.2)]"
+                        : "bg-zinc-700"
+                      }`}
                   />
                   <span
-                    className={`text-[11px] ${
-                      step.done
-                        ? "text-gray-500 dark:text-zinc-400"
-                        : step.active
-                        ? "text-gray-900 dark:text-zinc-100 font-medium"
-                        : "text-gray-400 dark:text-zinc-600"
-                    }`}
+                    className={`text-[11px] ${step.done
+                      ? "text-zinc-400"
+                      : step.active
+                        ? "text-zinc-100 font-medium"
+                        : "text-zinc-600"
+                      }`}
                   >
                     {step.name}
                   </span>
                 </div>
                 {step.active && (
-                  <span className="text-[9px] font-medium text-gray-600 dark:text-zinc-300 bg-gray-200 dark:bg-zinc-800 px-1.5 py-0.5 rounded">
+                  <span className="text-[9px] font-medium text-zinc-300 bg-zinc-800 px-1.5 py-0.5 rounded">
                     Pending Action
                   </span>
                 )}
@@ -248,14 +246,14 @@ export function VoucherCard({
       )}
 
       {/* Footer */}
-      <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-zinc-800/80">
-        <div className="flex items-center gap-2 text-gray-500 dark:text-zinc-400">
-          <div className="w-6 h-6 rounded-full bg-gray-100 dark:bg-zinc-800 flex items-center justify-center border border-gray-200 dark:border-zinc-700 text-gray-600 dark:text-zinc-300">
+      <div className="flex items-center justify-between pt-4 border-t border-zinc-800/80">
+        <div className="flex items-center gap-2 text-zinc-400">
+          <div className="w-6 h-6 rounded-full bg-zinc-800 flex items-center justify-center border border-zinc-700 text-zinc-300">
             <User size={12} color="currentColor" />
           </div>
           <div className="flex flex-col">
-            <span className="text-[10px] text-gray-400 dark:text-zinc-500 leading-none mb-0.5">Raised by</span>
-            <span className="text-[11px] font-medium text-gray-700 dark:text-zinc-300 leading-none">
+            <span className="text-[10px] text-zinc-500 leading-none mb-0.5">Raised by</span>
+            <span className="text-[11px] font-medium text-zinc-300 leading-none">
               {v.raised_by?.name ?? "—"}
             </span>
           </div>
@@ -268,7 +266,7 @@ export function VoucherCard({
           <button
             onClick={() => onDelete(v.id)}
             disabled={isDeleting}
-            className="p-1.5 rounded-md bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 text-gray-500 dark:text-zinc-400 hover:text-red-500 dark:hover:text-red-400 hover:border-red-200 dark:hover:border-red-500/30 transition-colors shadow-sm disabled:opacity-40"
+            className="p-1.5 rounded-md bg-zinc-800 border border-zinc-700 text-zinc-400 hover:text-red-400 hover:border-red-500/30 transition-colors shadow-sm disabled:opacity-40"
           >
             <Trash size={14} color="currentColor" />
           </button>
@@ -276,7 +274,7 @@ export function VoucherCard({
         {(v.status === "pending" || v.status === "approved") && onComment && (
           <button
             onClick={() => onComment(v)}
-            className="p-1.5 rounded-md bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 text-gray-500 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 transition-colors shadow-sm"
+            className="p-1.5 rounded-md bg-zinc-800 border border-zinc-700 text-zinc-400 hover:text-zinc-100 transition-colors shadow-sm"
           >
             <MessageText size={14} color="currentColor" />
           </button>
@@ -288,7 +286,7 @@ export function VoucherCard({
         <button
           onClick={() => onSubmit(v.id)}
           disabled={isSubmitting}
-          className="w-full mt-2 py-2 rounded-lg bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-medium hover:bg-black dark:hover:bg-white transition-all shadow-sm disabled:opacity-40"
+          className="w-full mt-2 py-2 rounded-lg bg-zinc-100 text-zinc-900 text-xs font-medium hover:bg-white transition-all shadow-sm disabled:opacity-40"
         >
           {isSubmitting ? "Submitting…" : "Submit for Approval"}
         </button>

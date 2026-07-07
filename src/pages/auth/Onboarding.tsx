@@ -97,7 +97,7 @@ export default function OnboardingPage() {
             },
             {
                 onSuccess: (data) => {
-             
+
                     if (data.checkout_link) {
                         window.location.href = data.checkout_link;
                     } else {
@@ -256,11 +256,10 @@ export default function OnboardingPage() {
                             {PLAN_OPTIONS.map((opt) => (
                                 <label
                                     key={opt.value}
-                                    className={`flex items-start gap-3 border rounded-lg px-3.5 py-3 cursor-pointer transition-all ${
-                                        plan === opt.value
+                                    className={`flex items-start gap-3 border rounded-lg px-3.5 py-3 cursor-pointer transition-all ${plan === opt.value
                                             ? "border-zinc-500 bg-zinc-800/50"
                                             : "border-zinc-800 hover:border-zinc-700"
-                                    }`}
+                                        }`}
                                 >
                                     <input
                                         type="radio"
