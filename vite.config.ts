@@ -12,7 +12,7 @@ export default defineConfig({
   server: {
     host: true,
     allowedHosts: [
-      "calculate-greg-carlos-net.trycloudflare.com"
+      "distribution-judy-provinces-proudly.trycloudflare.com"
     ]
   }
 })

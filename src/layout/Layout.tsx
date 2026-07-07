@@ -22,7 +22,7 @@ export default function Layout({ children }: DashboardLayoutProps) {
 
   if (isLoading || !me) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#f7f6f3]">
+      <div className="flex min-h-screen items-center justify-center">
         <span className="w-5 h-5 border-2 border-gray-300 border-t-gray-800 rounded-full animate-spin" />
       </div>
     );
@@ -34,6 +34,7 @@ export default function Layout({ children }: DashboardLayoutProps) {
     name: me.name ?? "",
     role: me.department?.name ?? "Member",
     avatarColor: avatarColor(me.name),
+    avatarUrl: me.avatar_url,
     permissions: {
       can_create:               !!perms.can_create,
       can_approve:              !!perms.can_approve,
@@ -67,7 +68,7 @@ export default function Layout({ children }: DashboardLayoutProps) {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#f7f6f3]">
+    <div className="flex min-h-screen ">
       <Sidebar user={user} onLogout={() => logout.mutate()} />
       <main className="flex-1 overflow-y-auto pt-14 lg:pt-0">
         {children}

@@ -1,5 +1,5 @@
 // src/api/hooks/useOnboarding.ts
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import api from "../lib/axios";
@@ -20,6 +20,26 @@ export interface OnboardingResponse {
   owner: OnboardingOwner;
 }
 
+export interface OrganizationDetails {
+  id: string;
+  name: string;
+  logo_url: string;
+  number_of_workers: number;
+  plan: string;
+  owner_id: string | null;
+  limits: {
+    max_departments: number;
+    max_users: number;
+  };
+  features: {
+    multi_step_approvals: boolean;
+    department_permissions: boolean;
+    full_reporting_dashboard: boolean;
+    audit_log_export: boolean;
+    priority_support: boolean;
+  };
+}
+
 // ── Payloads ───────────────────────────────────────────────────────────────
 
 export interface SetupWorkspacePayload {
@@ -31,12 +51,22 @@ export interface SetupWorkspacePayload {
   logo?: File;
 }
 
+export interface UpdateOrganizationPayload {
+  name?: string;
+  number_of_workers?: number;
+  logo?: File;
+}
+
 // ── Helpers ────────────────────────────────────────────────────────────────
 
 const getErrorMessage = (
   error: AxiosError<APIError> | any,
   defaultMessage = "An error occurred",
 ) => error?.response?.data?.message || error?.message || defaultMessage;
+
+export const organizationKeys = {
+  me: ["organization", "me"] as const,
+};
 
 // ── HOOKS ──────────────────────────────────────────────────────────────────
 
@@ -71,6 +101,51 @@ export function useSetupWorkspace() {
     },
     onError: (error) => {
       toast.error(getErrorMessage(error, "Failed to create workspace"));
+    },
+  });
+}
+
+// Fetch the logged-in user's organization details
+export function useOrganization() {
+  return useQuery<OrganizationDetails, AxiosError<APIError>>({
+    queryKey: organizationKeys.me,
+    queryFn: async () => {
+      const { data } = await api.get<{ data: OrganizationDetails }>("/organizations/me");
+      return data.data;
+    },
+  });
+}
+
+export function useUpdateOrganization() {
+  const queryClient = useQueryClient();
+
+  return useMutation<OrganizationDetails, AxiosError<APIError>, UpdateOrganizationPayload>({
+    mutationFn: async ({ logo, ...fields }) => {
+      const form = new FormData();
+
+      if (fields.name !== undefined) {
+        form.append("name", fields.name);
+      }
+      if (fields.number_of_workers !== undefined) {
+        form.append("number_of_workers", String(fields.number_of_workers));
+      }
+      if (logo) {
+        form.append("logo", logo);
+      }
+
+      const { data } = await api.put<{ data: OrganizationDetails }>(
+        "/organizations/me",
+        form,
+        { headers: { "Content-Type": "multipart/form-data" } },
+      );
+      return data.data;
+    },
+    onSuccess: (data) => {
+      queryClient.setQueryData(organizationKeys.me, data);
+      toast.success("Organization updated successfully");
+    },
+    onError: (error) => {
+      toast.error(getErrorMessage(error, "Failed to update organization"));
     },
   });
 }

@@ -28,7 +28,7 @@ export default function LoginPage() {
       {
         onSuccess: () => {
           // navigate to dashboard — swap for your router call
-          window.location.href = "/dashboard";
+          window.location.href = "/settings";
         },
       },
     );
