@@ -121,35 +121,31 @@ export default function OrganisationSettingsPage() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-50
-       bg-zinc-950 text-gray-900 text-zinc-300 
-        pb-16 selection:bg-gray-200 selection:text-gray-900 
-        selection:bg-zinc-800 selection:text-zinc-100">
+      <div className="min-h-screen bg-zinc-950 text-zinc-300 font-sans pb-16 selection:bg-zinc-800 selection:text-zinc-100">
 
         {/* Top Nav */}
-        <div className="border-b border-gray-200 border-zinc-800/80 bg-white/80 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-10">
-          <div className="px-4 sm:px-6 h-16 flex items-center justify-between  mx-auto">
+        <div className="border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-10">
+          <div className="px-4 sm:px-6 h-16 flex items-center justify-between max-w-7xl mx-auto">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-gray-100 bg-zinc-900 rounded-lg border border-gray-200 border-zinc-800/80 shadow-sm text-gray-600 text-zinc-400">
+              <div className="p-2 bg-zinc-900 rounded-lg border border-zinc-800/80 shadow-sm text-zinc-400">
                 <Buildings size={18} color="currentColor" />
               </div>
-              <h1 className="text-sm font-medium text-gray-900 text-zinc-100">
+              <h1 className="text-sm font-medium text-zinc-100">
                 Organisation Settings
               </h1>
             </div>
           </div>
         </div>
 
-        <div className="px-4 sm:px-6 py-6 sm:py-8 space-y-6">
-          <div className="bg-white bg-zinc-900/40 border border-gray-200 border-zinc-800/50 rounded-xl overflow-hidden shadow-sm">
+        <div className="px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8 max-w-7xl mx-auto">
+          <div className="bg-zinc-900/50 border border-zinc-800/80 rounded-xl overflow-hidden shadow-sm flex flex-col">
 
-            <div className="p-5 sm:p-8 border-b border-gray-200 border-zinc-800/80 bg-gray-50 bg-zinc-900">
-              <h2 className="text-lg font-semibold text-gray-900 text-zinc-100">Organisation Profile</h2>
+            <div className="p-5 sm:p-8 border-b border-zinc-800/80 bg-zinc-900/90">
+              <h2 className="text-lg font-semibold text-zinc-100">Organisation Profile</h2>
               <p className="text-xs text-zinc-500 mt-1">Manage your organisation's information.</p>
             </div>
 
             <div className="p-5 sm:p-8 space-y-8">
-
               {/* Logo Section */}
               <div className="flex items-center gap-4 sm:gap-6">
                 <input
@@ -159,7 +155,7 @@ export default function OrganisationSettingsPage() {
                   className="hidden"
                   onChange={handleLogoChange}
                 />
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gray-100 bg-zinc-800 border border-gray-200 border-zinc-700 flex items-center justify-center text-xl sm:text-2xl font-bold text-gray-400 text-zinc-500 uppercase tracking-widest shadow-inner flex-shrink-0 overflow-hidden">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xl sm:text-2xl font-bold text-zinc-500 uppercase tracking-widest shadow-inner flex-shrink-0 overflow-hidden">
                   {logoUrl ? (
                     <img src={logoUrl} alt={org?.name || "Logo"} className="w-full h-full object-cover" />
                   ) : (
@@ -171,15 +167,17 @@ export default function OrganisationSettingsPage() {
                     <button
                       type="button"
                       onClick={handlePickLogo}
-                      className="px-3 sm:px-4 py-2 bg-gray-900 bg-zinc-100 text-white text-zinc-900 text-xs font-medium rounded-lg hover:bg-black hover:bg-white transition-colors flex items-center gap-2 shadow-sm"
+                      className="px-3 sm:px-4 py-2 bg-zinc-100 text-zinc-900 text-xs font-medium rounded-lg hover:bg-white transition-colors flex items-center gap-2 shadow-sm"
                     >
-                      <Camera size={14} color="currentColor" /> <span className="hidden xs:inline">Change Logo</span><span className="xs:hidden">Change</span>
+                      <Camera size={14} color="currentColor" /> 
+                      <span className="hidden sm:inline">Change Logo</span>
+                      <span className="sm:hidden">Change</span>
                     </button>
                     {logoPreview && (
                       <button
                         type="button"
                         onClick={handleClearLogoSelection}
-                        className="px-3 py-2 border border-gray-200 border-zinc-700 bg-white bg-zinc-900 text-red-600 text-red-400 text-xs font-medium rounded-lg hover:bg-red-50 hover:bg-red-500/10 transition-colors"
+                        className="px-3 py-2 border border-red-500/20 bg-red-500/10 text-red-400 text-xs font-medium rounded-lg hover:bg-red-500/20 transition-colors"
                       >
                         <Trash size={14} color="currentColor" />
                       </button>
@@ -191,56 +189,55 @@ export default function OrganisationSettingsPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 text-zinc-400 mb-1.5">Organisation Name</label>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1.5">Organisation Name</label>
                   <input
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-white bg-zinc-950 border border-gray-200 border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-gray-900 text-zinc-100 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-zinc-600 transition-all font-medium"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-zinc-200 outline-none focus:border-zinc-600 transition-colors font-medium"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 text-zinc-400 mb-1.5">Number of Workers</label>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1.5">Number of Workers</label>
                   <input
                     type="number"
                     min={0}
                     value={numberOfWorkers}
                     onChange={(e) => setNumberOfWorkers(e.target.value)}
-                    className="w-full bg-white bg-zinc-950 border border-gray-200 border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-gray-900 text-zinc-100 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-zinc-600 transition-all"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-zinc-200 outline-none focus:border-zinc-600 transition-colors font-medium"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 text-zinc-400 mb-1.5">Plan</label>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1.5">Plan</label>
                   <input
                     type="text"
                     value={org?.plan ? org.plan.charAt(0).toUpperCase() + org.plan.slice(1) : ""}
                     disabled
-                    className="w-full bg-gray-50 bg-zinc-900 border border-gray-200 border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-zinc-500 cursor-not-allowed"
+                    className="w-full bg-zinc-950/60 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-zinc-500 cursor-not-allowed"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 text-zinc-400 mb-1.5">Max Departments / Users</label>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1.5">Max Departments / Users</label>
                   <input
                     type="text"
                     value={
                       org
-                        ? `${org.limits.max_departments === -1 ? "Unlimited" : org.limits.max_departments} / ${org.limits.max_users === -1 ? "Unlimited" : org.limits.max_users
-                        }`
+                        ? `${org.limits.max_departments === -1 ? "Unlimited" : org.limits.max_departments} / ${org.limits.max_users === -1 ? "Unlimited" : org.limits.max_users}`
                         : ""
                     }
                     disabled
-                    className="w-full bg-gray-50 bg-zinc-900 border border-gray-200 border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-zinc-500 cursor-not-allowed"
+                    className="w-full bg-zinc-950/60 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-zinc-500 cursor-not-allowed"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="p-4 border-t border-gray-200 border-zinc-800 bg-gray-50 bg-zinc-900/80 flex justify-end">
+            <div className="p-4 sm:px-8 sm:py-5 border-t border-zinc-800/80 bg-zinc-900/80 flex justify-end">
               <button
                 type="button"
                 onClick={handleSave}
                 disabled={updateOrg.isPending || isLoading}
-                className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-gray-900 bg-zinc-100 text-white text-zinc-900 text-sm font-medium hover:bg-black hover:bg-white transition-all shadow-sm disabled:opacity-50"
+                className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-zinc-100 text-zinc-900 text-sm font-medium hover:bg-white transition-all shadow-sm disabled:opacity-50"
               >
                 {updateOrg.isPending ? "Saving..." : "Save Changes"}
               </button>
@@ -248,59 +245,62 @@ export default function OrganisationSettingsPage() {
           </div>
 
           {/* Password Section */}
-          <div className="bg-white bg-zinc-900/40 border border-gray-200 border-zinc-800/50 rounded-xl overflow-hidden shadow-sm">
-            <div className="p-5 sm:p-8 border-b border-gray-200 border-zinc-800/80 bg-gray-50 bg-zinc-900 flex items-center gap-3">
-              <div className="p-2 bg-gray-100 bg-zinc-900 rounded-lg border border-gray-200 border-zinc-800/80 shadow-sm text-gray-600 text-zinc-400">
+          <div className="bg-zinc-900/50 border border-zinc-800/80 rounded-xl overflow-hidden shadow-sm flex flex-col">
+            <div className="p-5 sm:p-8 border-b border-zinc-800/80 bg-zinc-900/90 flex items-center gap-3">
+              <div className="p-2 bg-zinc-900 rounded-lg border border-zinc-800/80 shadow-sm text-zinc-400">
                 <Lock size={16} color="currentColor" />
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-gray-900 text-zinc-100">Password</h2>
+                <h2 className="text-lg font-semibold text-zinc-100">Password</h2>
                 <p className="text-xs text-zinc-500 mt-1">Update the password used to sign in.</p>
               </div>
             </div>
 
-            <div className="p-5 sm:p-8 space-y-5">
-              <div>
-                <label className="block text-xs font-medium text-gray-700 text-zinc-400 mb-1.5">Current Password</label>
+            <div className="p-5 sm:p-8 space-y-6">
+              <div className="max-w-2xl">
+                <label className="block text-xs font-medium text-zinc-400 mb-1.5">Current Password</label>
                 <input
                   type="password"
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
                   autoComplete="current-password"
-                  className="w-full bg-white bg-zinc-950 border border-gray-200 border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-gray-900 text-zinc-100 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-zinc-600 transition-all"
+                  placeholder="••••••••"
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-zinc-200 outline-none focus:border-zinc-600 transition-colors font-medium placeholder-zinc-600"
                 />
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 max-w-2xl">
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 text-zinc-400 mb-1.5">New Password</label>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1.5">New Password</label>
                   <input
                     type="password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     autoComplete="new-password"
-                    className="w-full bg-white bg-zinc-950 border border-gray-200 border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-gray-900 text-zinc-100 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-zinc-600 transition-all"
+                    placeholder="••••••••"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-zinc-200 outline-none focus:border-zinc-600 transition-colors font-medium placeholder-zinc-600"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 text-zinc-400 mb-1.5">Confirm New Password</label>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1.5">Confirm New Password</label>
                   <input
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     autoComplete="new-password"
-                    className="w-full bg-white bg-zinc-950 border border-gray-200 border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-gray-900 text-zinc-100 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-zinc-600 transition-all"
+                    placeholder="••••••••"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-zinc-200 outline-none focus:border-zinc-600 transition-colors font-medium placeholder-zinc-600"
                   />
                 </div>
               </div>
               <p className="text-[10px] text-zinc-500">Must be at least 8 characters.</p>
             </div>
 
-            <div className="p-4 border-t border-gray-200 border-zinc-800 bg-gray-50 bg-zinc-900/80 flex justify-end">
+            <div className="p-4 sm:px-8 sm:py-5 border-t border-zinc-800/80 bg-zinc-900/80 flex justify-end">
               <button
                 type="button"
                 onClick={handleChangePassword}
                 disabled={changePassword.isPending}
-                className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-gray-900 bg-zinc-100 text-white text-zinc-900 text-sm font-medium hover:bg-black hover:bg-white transition-all shadow-sm disabled:opacity-50"
+                className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-zinc-100 text-zinc-900 text-sm font-medium hover:bg-white transition-all shadow-sm disabled:opacity-50"
               >
                 {changePassword.isPending ? "Updating..." : "Update Password"}
               </button>

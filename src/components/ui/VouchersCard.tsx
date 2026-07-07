@@ -101,7 +101,7 @@ function FieldValueDisplay({ fv }: { fv: VoucherFieldValue }) {
         target="_blank"
         rel="noopener noreferrer"
         onClick={(e) => e.stopPropagation()}
-        className="text-xs text-blue-400 underline underline-offset-2 truncate hover:opacity-80 transition-opacity"
+        className="text-xs text-zinc-300 hover:text-zinc-100 underline underline-offset-2 truncate transition-colors"
       >
         View file ↗
       </a>
@@ -132,7 +132,7 @@ export function VoucherFields({ fieldValues }: { fieldValues?: VoucherFieldValue
     <div className="grid grid-cols-1 gap-x-4 gap-y-2.5">
       {fieldValues.map((fv) => (
         <div key={fv.id} className="flex flex-col min-w-0">
-          <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wide truncate">
+          <span className="text-[10px] font-medium text-zinc-500 uppercase tracking-wide truncate mb-0.5">
             {fv.field?.label ?? "Field"}
           </span>
           <FieldValueDisplay fv={fv} />
@@ -164,10 +164,10 @@ export function VoucherCard({
   const approvalSteps = getApprovalSteps(v);
 
   return (
-    <div className="bg-zinc-900/80 border border-zinc-800/80 hover:border-zinc-700 rounded-xl p-5 transition-all group flex flex-col gap-5 relative shadow-sm hover:shadow-md">
+    <div className="bg-zinc-900/50 border border-zinc-800/80 hover:border-zinc-700 rounded-xl p-5 transition-all group flex flex-col gap-5 relative shadow-sm">
       {/* Header */}
       <div className="flex justify-between items-center">
-        <span className="text-[11px] font-mono text-zinc-400 tracking-wide bg-zinc-950 px-2 py-0.5 rounded border border-zinc-800">
+        <span className="text-[11px] font-mono text-zinc-400 tracking-wide bg-zinc-950 px-2 py-0.5 rounded border border-zinc-800/80">
           {v.code}
         </span>
         <StatusBadge status={v.status} />
@@ -175,21 +175,21 @@ export function VoucherCard({
 
       {/* Type + field values */}
       <div>
-        <h3 className="text-base font-semibold text-zinc-100 leading-snug mb-3">
+        <h3 className="text-base font-semibold text-zinc-100 leading-snug mb-4">
           {v.voucher_type?.name ?? "Voucher"}
         </h3>
 
         <VoucherFields fieldValues={v.field_values} />
 
-        <div className="flex flex-wrap gap-2 mt-3">
+        <div className="flex flex-wrap gap-2 mt-4">
           {v.department && (
-            <div className="inline-flex items-center gap-1 px-2 py-1 bg-pri border border-zinc-800 rounded-md text-[10px] text-zinc-400">
-              <Building size={10} color="currentColor" />
+            <div className="inline-flex items-center gap-1.5 px-2 py-1 bg-zinc-950 border border-zinc-800/80 rounded-md text-[10px] text-zinc-400">
+              <Building size={12} color="currentColor" />
               {v.department.name}
             </div>
           )}
-          <div className="inline-flex items-center gap-1 px-2 py-1 bg-pri border border-zinc-800 rounded-md text-[10px] text-zinc-400">
-            <Calendar size={10} color="currentColor" />
+          <div className="inline-flex items-center gap-1.5 px-2 py-1 bg-zinc-950 border border-zinc-800/80 rounded-md text-[10px] text-zinc-400">
+            <Calendar size={12} color="currentColor" />
             {formatDate(v.created_at)}
           </div>
           {v.duplicate_flag?.is_duplicate && !v.duplicate_flag.dismissed_at && (
@@ -202,7 +202,7 @@ export function VoucherCard({
 
       {/* Approval flow */}
       {approvalSteps.length > 0 && (
-        <div className="bg-pri/50 rounded-lg p-3.5 border border-zinc-800/50">
+        <div className="bg-zinc-950/50 rounded-lg p-3.5 border border-zinc-800/50">
           <div className="flex items-center justify-between mb-3">
             <p className="text-[10px] font-medium text-zinc-500 uppercase tracking-widest">
               Approval Flow
@@ -211,7 +211,7 @@ export function VoucherCard({
               {v.amount_tier?.label ?? `Tier ${v.tier}`}
             </span>
           </div>
-          <div className="flex flex-col gap-2 border-l border-zinc-800 ml-1.5 pl-3.5 relative">
+          <div className="flex flex-col gap-2.5 border-l border-zinc-800 ml-1.5 pl-3.5 relative">
             {approvalSteps.map((step) => (
               <div key={step.id} className="flex items-center justify-between relative">
                 <div className="flex items-center gap-2.5">
@@ -247,13 +247,13 @@ export function VoucherCard({
 
       {/* Footer */}
       <div className="flex items-center justify-between pt-4 border-t border-zinc-800/80">
-        <div className="flex items-center gap-2 text-zinc-400">
-          <div className="w-6 h-6 rounded-full bg-zinc-800 flex items-center justify-center border border-zinc-700 text-zinc-300">
+        <div className="flex items-center gap-2.5 text-zinc-400">
+          <div className="w-6 h-6 rounded-full bg-zinc-800 flex items-center justify-center border border-zinc-700 text-zinc-300 flex-shrink-0">
             <User size={12} color="currentColor" />
           </div>
-          <div className="flex flex-col">
+          <div className="flex flex-col min-w-0">
             <span className="text-[10px] text-zinc-500 leading-none mb-0.5">Raised by</span>
-            <span className="text-[11px] font-medium text-zinc-300 leading-none">
+            <span className="text-[11px] font-medium text-zinc-300 leading-none truncate">
               {v.raised_by?.name ?? "—"}
             </span>
           </div>

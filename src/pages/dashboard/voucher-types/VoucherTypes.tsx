@@ -88,58 +88,58 @@ function VoucherTypeModal({ initial, onClose, onSave, isPending }: VoucherTypeMo
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
-      <div className="w-full max-w-lg bg-white bg-zinc-900 border border-gray-200 border-zinc-800 rounded-xl shadow-xl max-h-[85vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-3 sm:px-4">
+      <div className="w-full max-w-lg bg-zinc-900 border border-zinc-800 rounded-xl shadow-2xl max-h-[90vh] sm:max-h-[85vh] flex flex-col">
 
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-200 border-zinc-800">
-          <h2 className="text-sm font-semibold flex items-center gap-2 text-gray-900 text-zinc-100">
-            <Receipt21 size={18} color="currentColor" />
+        <div className="flex items-center justify-between px-4 sm:px-5 py-4 border-b border-zinc-800">
+          <h2 className="text-sm font-semibold flex items-center gap-2 text-zinc-100 min-w-0 truncate">
+            <Receipt21 size={18} color="currentColor" className="flex-shrink-0" />
             {isEditing ? "Edit Voucher Type" : "Define Voucher Type"}
           </h2>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 hover:bg-zinc-800 rounded">
+          <button onClick={onClose} className="p-1 hover:bg-zinc-800 rounded text-zinc-400 hover:text-zinc-100 transition-colors flex-shrink-0">
             <CloseCircle size={18} color="currentColor" />
           </button>
         </div>
 
         {/* Body */}
-        <div className="px-5 py-4 space-y-5 overflow-y-auto">
+        <div className="px-4 sm:px-5 py-4 space-y-5 overflow-y-auto">
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-600 text-zinc-400">Type Name</label>
+            <label className="text-xs font-medium text-zinc-400">Type Name</label>
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Contractor Payment"
-              className="w-full text-sm bg-pri border border-gray-200 border-zinc-800 rounded-lg px-3 py-2 outline-none focus:border-gray-400 focus:border-zinc-600"
+              className="w-full text-sm bg-pri border border-zinc-800 rounded-lg px-3 py-2 outline-none text-zinc-200 placeholder-zinc-600 focus:border-zinc-600 transition-colors"
             />
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-600 text-zinc-400">Description</label>
+            <label className="text-xs font-medium text-zinc-400">Description</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="What is this voucher type used for?"
               rows={2}
-              className="w-full text-sm bg-pri border border-gray-200 border-zinc-800 rounded-lg px-3 py-2 outline-none focus:border-gray-400 focus:border-zinc-600 resize-none"
+              className="w-full text-sm bg-pri border border-zinc-800 rounded-lg px-3 py-2 outline-none text-zinc-200 placeholder-zinc-600 focus:border-zinc-600 resize-none transition-colors"
             />
           </div>
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-medium text-gray-600 text-zinc-400 flex items-center gap-1.5">
+              <label className="text-xs font-medium text-zinc-400 flex items-center gap-1.5">
                 <Setting2 size={13} color="currentColor" /> Custom Fields
               </label>
               <button
                 onClick={addField}
-                className="flex items-center gap-1 text-xs font-medium text-gray-700 text-zinc-300 hover:text-gray-900 hover:text-zinc-100"
+                className="flex items-center gap-1 text-xs font-medium text-zinc-300 hover:text-zinc-100 transition-colors"
               >
                 <Add size={14} color="currentColor" /> Add Field
               </button>
             </div>
 
             {fields.length === 0 && (
-              <p className="text-xs text-gray-400 text-zinc-500 py-3 text-center border border-dashed border-gray-200 border-zinc-800 rounded-lg">
+              <p className="text-xs text-zinc-500 py-3 text-center border border-dashed border-zinc-800 rounded-lg px-2">
                 No custom fields yet — add one to capture extra info on this voucher type.
               </p>
             )}
@@ -148,38 +148,43 @@ function VoucherTypeModal({ initial, onClose, onSave, isPending }: VoucherTypeMo
               {fields.map((field) => (
                 <div
                   key={field.id}
-                  className="flex items-center gap-2 bg-pri border border-gray-200 border-zinc-800 rounded-lg px-2 py-2"
+                  className="flex flex-col sm:flex-row sm:items-center gap-2 bg-pri border border-zinc-800 rounded-lg px-2 py-2"
                 >
-                  <TagRight size={14} color="currentColor" className="text-gray-400 text-zinc-500 shrink-0" />
-                  <input
-                    value={field.label}
-                    onChange={(e) => updateField(field.id, { label: e.target.value })}
-                    placeholder="Field label"
-                    className="flex-1 text-xs bg-transparent outline-none text-gray-800 text-zinc-200 min-w-0"
-                  />
-                  <div className="flex items-center gap-1 shrink-0 bg-white bg-zinc-900 border border-gray-200 border-zinc-800 rounded-md p-0.5">
-                    {FIELD_TYPES.map((ft) => {
-                      const active = field.type === ft.value;
-                      return (
-                        <button
-                          key={ft.value}
-                          onClick={() => updateField(field.id, { type: ft.value })}
-                          className={`text-[11px] font-medium px-2 py-1 rounded ${active
-                            ? "bg-gray-900 bg-zinc-100 text-white text-zinc-900"
-                            : "text-gray-400 text-zinc-500 hover:bg-gray-100 hover:bg-zinc-800"
-                            }`}
-                        >
-                          {ft.label}
-                        </button>
-                      );
-                    })}
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <TagRight size={14} color="currentColor" className="text-zinc-500 shrink-0" />
+                    <input
+                      value={field.label}
+                      onChange={(e) => updateField(field.id, { label: e.target.value })}
+                      placeholder="Field label"
+                      className="flex-1 text-xs bg-transparent outline-none text-zinc-200 placeholder-zinc-600 min-w-0"
+                    />
                   </div>
-                  <button
-                    onClick={() => removeField(field.id)}
-                    className="p-1.5 hover:bg-red-50 hover:bg-red-900/20 text-red-500 rounded shrink-0"
-                  >
-                    <Trash size={13} color="currentColor" />
-                  </button>
+                  <div className="flex items-center justify-between gap-2 shrink-0">
+                    <div className="flex items-center gap-1 shrink-0 bg-zinc-900 border border-zinc-800 rounded-md p-0.5 overflow-x-auto">
+                      {FIELD_TYPES.map((ft) => {
+                        const active = field.type === ft.value;
+                        return (
+                          <button
+                            key={ft.value}
+                            onClick={() => updateField(field.id, { type: ft.value })}
+                            className={`text-[11px] font-medium px-2 py-1 rounded whitespace-nowrap transition-colors ${
+                              active
+                                ? "bg-zinc-100 text-zinc-900"
+                                : "text-zinc-500 hover:bg-zinc-800"
+                            }`}
+                          >
+                            {ft.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <button
+                      onClick={() => removeField(field.id)}
+                      className="p-1.5 hover:bg-red-900/20 text-red-500 rounded shrink-0 transition-colors"
+                    >
+                      <Trash size={13} color="currentColor" />
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -187,18 +192,18 @@ function VoucherTypeModal({ initial, onClose, onSave, isPending }: VoucherTypeMo
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-2 px-5 py-4 border-t border-gray-200 border-zinc-800">
+        <div className="flex items-center justify-end gap-2 px-4 sm:px-5 py-4 border-t border-zinc-800">
           <button
             onClick={onClose}
             disabled={isPending}
-            className="text-sm font-medium px-4 py-2 rounded-lg text-gray-600 text-zinc-400 hover:bg-gray-100 hover:bg-zinc-800 disabled:opacity-40"
+            className="text-sm font-medium px-4 py-2 rounded-lg text-zinc-400 hover:bg-zinc-800 disabled:opacity-40 transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleSave}
             disabled={!canSave || isPending}
-            className="text-sm font-medium px-4 py-2 rounded-lg bg-gray-900 bg-zinc-100 text-white text-zinc-900 hover:bg-black hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+            className="text-sm font-medium px-4 py-2 rounded-lg bg-zinc-100 text-zinc-900 hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed transition-all"
           >
             {isPending ? "Saving..." : isEditing ? "Save Changes" : "Create Type"}
           </button>
@@ -212,13 +217,13 @@ function VoucherTypeModal({ initial, onClose, onSave, isPending }: VoucherTypeMo
 
 function StatCard({ icon: Icon, label, value }: { icon: React.ElementType; label: string; value: number | string }) {
   return (
-    <div className="flex items-center gap-3 bg-white bg-zinc-900 border border-gray-200 border-zinc-800 rounded-xl px-4 py-3">
-      <div className="p-2 rounded-lg bg-gray-100 bg-zinc-800 text-gray-600 text-zinc-300">
+    <div className="flex items-center gap-3 bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 min-w-0">
+      <div className="p-2 rounded-lg bg-zinc-800 text-zinc-300 flex-shrink-0">
         <Icon size={16} color="currentColor" />
       </div>
-      <div>
-        <p className="text-lg font-semibold leading-none text-gray-900 text-zinc-100">{value}</p>
-        <p className="text-[11px] text-gray-500 text-zinc-400 mt-0.5">{label}</p>
+      <div className="min-w-0">
+        <p className="text-lg font-semibold leading-none text-zinc-100">{value}</p>
+        <p className="text-[11px] text-zinc-400 mt-0.5 truncate">{label}</p>
       </div>
     </div>
   );
@@ -276,24 +281,24 @@ export default function VoucherTypesPage() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-pri text-gray-900 text-zinc-300 font-sans pb-16">
+      <div className="min-h-screen bg-zinc-950 text-zinc-300 font-sans pb-16 selection:bg-zinc-800 selection:text-zinc-100">
 
         {/* Top Nav */}
-        <div className="border-b border-gray-200 border-zinc-800 bg-white/80 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-10">
-          <div className="px-6 h-16 flex items-center justify-between max-w-7xl mx-auto">
-            <h1 className="text-sm font-medium flex items-center gap-2">
-              <Hierarchy size={18} color="currentColor" /> Voucher Type Definitions
+        <div className="border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-10">
+          <div className="px-4 sm:px-6 py-3 sm:py-0 sm:h-16 flex flex-col sm:flex-row sm:items-center justify-between gap-3 max-w-7xl mx-auto">
+            <h1 className="text-sm font-medium flex items-center gap-2 text-zinc-100 min-w-0 truncate">
+              <Hierarchy size={18} color="currentColor" className="flex-shrink-0" /> Voucher Type Definitions
             </h1>
             <button
               onClick={() => setModalTarget("new")}
-              className="flex items-center gap-1.5 bg-gray-900 bg-zinc-100 hover:bg-black hover:bg-white text-white text-zinc-900 text-sm font-medium px-4 py-2 rounded-lg transition-all"
+              className="flex items-center justify-center gap-1.5 bg-zinc-100 hover:bg-white text-zinc-900 text-sm font-medium px-4 py-2 rounded-lg transition-all w-full sm:w-auto"
             >
               <Add size={16} color="currentColor" /> Create New Type
             </button>
           </div>
         </div>
 
-        <div className="px-6 py-8 max-w-7xl mx-auto">
+        <div className="px-4 sm:px-6 py-6 sm:py-8 max-w-7xl mx-auto">
 
           {/* Stats Strip */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
@@ -304,52 +309,52 @@ export default function VoucherTypesPage() {
 
           {/* Loading */}
           {isLoading && (
-            <div className="text-sm text-gray-400 text-zinc-500 text-center py-16">
+            <div className="text-sm text-zinc-500 text-center py-16">
               <Loader />
             </div>
           )}
 
           {/* Empty */}
           {!isLoading && types.length === 0 && (
-            <div className="text-sm text-gray-400 text-zinc-500 text-center py-16 border border-dashed border-gray-200 border-zinc-800 rounded-xl">
+            <div className="text-sm text-zinc-500 text-center py-16 border border-dashed border-zinc-800 rounded-xl px-4">
               No voucher types defined yet. Create one to get started.
             </div>
           )}
 
           {/* Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
             {types.map((type) => (
               <div
                 key={type.id}
-                className="bg-white bg-zinc-900 border border-gray-200 border-zinc-800 rounded-xl p-5 shadow-sm"
+                className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 sm:p-5 shadow-sm min-w-0"
               >
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="font-semibold text-gray-900 text-zinc-100">{type.name}</h3>
-                  <div className="flex gap-1">
+                <div className="flex justify-between items-start mb-4 gap-2">
+                  <h3 className="font-semibold text-zinc-100 truncate min-w-0">{type.name}</h3>
+                  <div className="flex gap-1 flex-shrink-0">
                     <button
                       onClick={() => setModalTarget(type)}
-                      className="p-1.5 hover:bg-gray-100 hover:bg-zinc-800 rounded"
+                      className="p-1.5 hover:bg-zinc-800 rounded text-zinc-400 hover:text-zinc-100 transition-colors"
                     >
                       <Edit2 size={14} color="currentColor" />
                     </button>
                     <button
                       onClick={() => handleDelete(type.id)}
                       disabled={deleteMutation.isPending}
-                      className="p-1.5 hover:bg-red-50 hover:bg-red-900/20 text-red-500 rounded disabled:opacity-40"
+                      className="p-1.5 hover:bg-red-900/20 text-red-500 rounded disabled:opacity-40 transition-colors"
                     >
                       <Trash size={14} color="currentColor" />
                     </button>
                   </div>
                 </div>
-                <p className="text-xs text-gray-500 text-zinc-400 mb-4">{type.description}</p>
+                <p className="text-xs text-zinc-400 mb-4 line-clamp-2">{type.description}</p>
                 <div className="space-y-2">
                   {type.fields.map((f) => (
                     <div
                       key={f.id}
-                      className="flex items-center justify-between gap-2 text-xs bg-pri px-2 py-1.5 rounded border border-gray-200 border-zinc-800"
+                      className="flex items-center justify-between gap-2 text-xs bg-pri px-2 py-1.5 rounded border border-zinc-800"
                     >
-                      <span className="text-gray-600 text-zinc-300">{f.label}</span>
-                      <span className="text-[10px] font-semibold uppercase tracking-wide text-gray-400 text-zinc-500 bg-white bg-zinc-900 border border-gray-200 border-zinc-800 rounded px-1.5 py-0.5 shrink-0">
+                      <span className="text-zinc-300 truncate min-w-0">{f.label}</span>
+                      <span className="text-[10px] font-semibold uppercase tracking-wide text-zinc-500 bg-zinc-900 border border-zinc-800 rounded px-1.5 py-0.5 shrink-0">
                         {FIELD_TYPE_LABEL[f.type]}
                       </span>
                     </div>

@@ -157,27 +157,27 @@ export default function ProfilePage() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-pri text-gray-900 text-zinc-300 font-sans pb-16 selection:bg-gray-200 selection:text-gray-900 selection:bg-zinc-800 selection:text-zinc-100">
+      <div className="min-h-screen bg-zinc-950 text-zinc-300 font-sans pb-16 selection:bg-zinc-800 selection:text-zinc-100">
 
         {/* Top Nav */}
-        <div className="border-b border-gray-200 border-zinc-800/80 bg-white/80 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-10">
-          <div className="px-4 sm:px-6 h-16 flex items-center justify-between m">
+        <div className="border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-10">
+          <div className="px-4 sm:px-6 h-16 flex items-center justify-between max-w-7xl mx-auto">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-gray-100 bg-zinc-900 rounded-lg border border-gray-200 border-zinc-800/80 shadow-sm text-gray-600 text-zinc-400">
+              <div className="p-2 bg-zinc-900 rounded-lg border border-zinc-800/80 shadow-sm text-zinc-400">
                 <User size={18} color="currentColor" />
               </div>
-              <h1 className="text-sm font-medium text-gray-900 text-zinc-100">
+              <h1 className="text-sm font-medium text-zinc-100">
                 Profile Settings
               </h1>
             </div>
           </div>
         </div>
 
-        <div className="px-4 sm:px-6 py-6 sm:py-8 ">
-          <div className="bg-white bg-zinc-900/40 border border-gray-200 border-zinc-800/50 rounded-xl overflow-hidden shadow-sm">
+        <div className="px-4 sm:px-6 py-6 sm:py-8 max-w-7xl mx-auto">
+          <div className="bg-zinc-900/50 border border-zinc-800/80 rounded-xl overflow-hidden shadow-sm">
 
-            <div className="p-5 sm:p-8 border-b border-gray-200 border-zinc-800/80 bg-gray-50 bg-zinc-900">
-              <h2 className="text-lg font-semibold text-gray-900 text-zinc-100">My Profile</h2>
+            <div className="p-5 sm:p-8 border-b border-zinc-800/80 bg-zinc-900/90">
+              <h2 className="text-lg font-semibold text-zinc-100">My Profile</h2>
               <p className="text-xs text-zinc-500 mt-1">Manage your personal information and password.</p>
             </div>
 
@@ -192,7 +192,7 @@ export default function ProfilePage() {
                   className="hidden"
                   onChange={handleAvatarChange}
                 />
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gray-100 bg-zinc-800 border border-gray-200 border-zinc-700 flex items-center justify-center text-xl sm:text-2xl font-bold text-gray-400 text-zinc-500 uppercase tracking-widest shadow-inner flex-shrink-0 overflow-hidden">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-zinc-800 border border-zinc-700 flex items-center justify-center text-xl sm:text-2xl font-bold text-zinc-500 uppercase tracking-widest shadow-inner flex-shrink-0 overflow-hidden">
                   {avatarUrl ? (
                     <img src={avatarUrl} alt={user?.name || "Avatar"} className="w-full h-full object-cover" />
                   ) : (
@@ -204,15 +204,17 @@ export default function ProfilePage() {
                     <button
                       type="button"
                       onClick={handlePickAvatar}
-                      className="px-3 sm:px-4 py-2 bg-gray-900 bg-zinc-100 text-white text-zinc-900 text-xs font-medium rounded-lg hover:bg-black hover:bg-white transition-colors flex items-center gap-2 shadow-sm"
+                      className="px-3 sm:px-4 py-2 bg-zinc-100 text-zinc-900 text-xs font-medium rounded-lg hover:bg-white transition-colors flex items-center gap-2 shadow-sm"
                     >
-                      <Camera size={14} color="currentColor" /> <span className="hidden xs:inline">Change Picture</span><span className="xs:hidden">Change</span>
+                      <Camera size={14} color="currentColor" /> 
+                      <span className="hidden sm:inline">Change Picture</span>
+                      <span className="sm:hidden">Change</span>
                     </button>
                     {avatarPreview && (
                       <button
                         type="button"
                         onClick={handleClearAvatarSelection}
-                        className="px-3 py-2 border border-gray-200 border-zinc-700 bg-white bg-zinc-900 text-red-600 text-red-400 text-xs font-medium rounded-lg hover:bg-red-50 hover:bg-red-500/10 transition-colors"
+                        className="px-3 py-2 border border-red-500/20 bg-red-500/10 text-red-400 text-xs font-medium rounded-lg hover:bg-red-500/20 transition-colors"
                       >
                         <Trash size={14} color="currentColor" />
                       </button>
@@ -224,78 +226,76 @@ export default function ProfilePage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 text-zinc-400 mb-1.5">Full Name</label>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1.5">Full Name</label>
                   <input
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-white bg-zinc-950 border border-gray-200 border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-gray-900 text-zinc-100 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-zinc-600 transition-all font-medium"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-zinc-200 outline-none focus:border-zinc-600 transition-colors font-medium"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 text-zinc-400 mb-1.5">Email Address</label>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1.5">Email Address</label>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-white bg-zinc-950 border border-gray-200 border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-gray-900 text-zinc-100 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-zinc-600 transition-all"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-zinc-200 outline-none focus:border-zinc-600 transition-colors font-medium"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 text-zinc-400 mb-1.5">Department</label>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1.5">Department</label>
                   <input
                     type="text"
                     value={deptCode ? `${deptName} (${deptCode})` : deptName}
                     disabled
-                    className="w-full bg-gray-50 bg-zinc-900 border border-gray-200 border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-zinc-500 cursor-not-allowed"
+                    className="w-full bg-zinc-950/60 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-zinc-500 cursor-not-allowed"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 text-zinc-400 mb-1.5">Organization</label>
+                  <label className="block text-xs font-medium text-zinc-400 mb-1.5">Organization</label>
                   <input
                     type="text"
                     value={orgPlanLabel ? `${orgName} — ${orgPlanLabel} plan` : orgName}
                     disabled
-                    className="w-full bg-gray-50 bg-zinc-900 border border-gray-200 border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-zinc-500 cursor-not-allowed"
+                    className="w-full bg-zinc-950/60 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-zinc-500 cursor-not-allowed"
                   />
                 </div>
-
-
               </div>
 
-              <div className=" flex justify-end">
+              <div className="flex justify-end">
                 <button
                   type="button"
                   onClick={handleSaveProfile}
                   disabled={updateMe.isPending || isLoading}
-                  className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-gray-900 bg-zinc-100 text-white text-zinc-900 text-sm font-medium hover:bg-black hover:bg-white transition-all shadow-sm disabled:opacity-50"
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-zinc-100 text-zinc-900 text-sm font-medium hover:bg-white transition-all shadow-sm disabled:opacity-50"
                 >
                   {updateMe.isPending ? "Saving..." : "Save Changes"}
                 </button>
               </div>
 
               {/* Change Password */}
-              <div className="pt-6 border-t border-gray-200 border-zinc-800">
-                <h3 className="text-sm font-semibold text-gray-900 text-zinc-100 mb-4">Change Password</h3>
+              <div className="pt-6 border-t border-zinc-800/80">
+                <h3 className="text-sm font-semibold text-zinc-100 mb-4">Change Password</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 max-w-2xl">
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 text-zinc-400 mb-1.5">Current Password</label>
+                    <label className="block text-xs font-medium text-zinc-400 mb-1.5">Current Password</label>
                     <input
                       type="password"
                       placeholder="••••••••"
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
-                      className="w-full bg-white bg-zinc-950 border border-gray-200 border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-gray-900 text-zinc-100 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-zinc-600 transition-all"
+                      className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-zinc-200 outline-none focus:border-zinc-600 transition-colors placeholder-zinc-600 font-medium"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-700 text-zinc-400 mb-1.5">New Password</label>
+                    <label className="block text-xs font-medium text-zinc-400 mb-1.5">New Password</label>
                     <input
                       type="password"
                       placeholder="••••••••"
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      className="w-full bg-white bg-zinc-950 border border-gray-200 border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-gray-900 text-zinc-100 focus:outline-none focus:ring-1 focus:ring-gray-400 focus:ring-zinc-600 transition-all"
+                      className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-zinc-200 outline-none focus:border-zinc-600 transition-colors placeholder-zinc-600 font-medium"
                     />
                   </div>
                 </div>
@@ -303,20 +303,18 @@ export default function ProfilePage() {
                   type="button"
                   onClick={handleUpdatePassword}
                   disabled={updateMe.isPending}
-                  className="mt-4 px-4 py-2 rounded-lg bg-gray-100 bg-zinc-800 text-gray-900 text-zinc-100 text-xs font-medium hover:bg-gray-200 hover:bg-zinc-700 transition-all border border-gray-200 border-zinc-700 disabled:opacity-50"
+                  className="mt-4 px-4 py-2 rounded-lg bg-zinc-800 text-zinc-100 text-xs font-medium hover:bg-zinc-700 transition-all border border-zinc-700 disabled:opacity-50"
                 >
                   {updateMe.isPending ? "Updating..." : "Update Password"}
                 </button>
-
-
               </div>
 
               {/* Permissions */}
-              <div className="pt-6 border-t border-gray-200 border-zinc-800">
+              <div className="pt-6 border-t border-zinc-800/80">
                 <div className="flex items-center justify-between mb-5">
                   <div className="flex items-center gap-2">
                     <ShieldTick size={16} color="currentColor" className="text-zinc-500" />
-                    <h3 className="text-sm font-semibold text-gray-900 text-zinc-100">
+                    <h3 className="text-sm font-semibold text-zinc-100">
                       Your Permissions
                     </h3>
                   </div>
@@ -334,34 +332,34 @@ export default function ProfilePage() {
                     {permissionGroups.map(([groupLabel, entries]) => (
                       <div
                         key={groupLabel}
-                        className="rounded-xl border border-gray-200 border-zinc-800 bg-gray-50/60 bg-zinc-900/40 overflow-hidden"
+                        className="rounded-xl border border-zinc-800 bg-zinc-900/40 overflow-hidden"
                       >
-                        <div className="px-4 py-2.5 border-b border-gray-200 border-zinc-800 bg-gray-100/60 bg-zinc-900/80">
+                        <div className="px-4 py-2.5 border-b border-zinc-800 bg-zinc-900/80">
                           <h4 className="text-[11px] font-semibold uppercase tracking-wide text-zinc-500">
                             {groupLabel}
                           </h4>
                         </div>
-                        <div className="divide-y divide-gray-200 divide-zinc-800">
+                        <div className="divide-y divide-zinc-800/80">
                           {entries.map(([key, granted]) => (
                             <div
                               key={key}
-                              className="flex items-center justify-between gap-3 px-4 py-2.5"
+                              className="flex items-center justify-between gap-3 px-4 py-2.5 hover:bg-zinc-800/40 transition-colors"
                             >
                               <span
                                 className={`text-xs ${granted
-                                  ? "text-gray-800 text-zinc-200"
-                                  : "text-gray-400 text-zinc-600"
+                                  ? "text-zinc-200"
+                                  : "text-zinc-600"
                                   }`}
                               >
                                 {formatPermissionLabel(key)}
                               </span>
                               {granted ? (
-                                <span className="flex items-center gap-1 text-[10px] font-medium text-gray-500 text-zinc-400">
+                                <span className="flex items-center gap-1 text-[10px] font-medium text-zinc-400">
                                   <TickCircle size={13} color="currentColor" />
                                   Enabled
                                 </span>
                               ) : (
-                                <span className="flex items-center gap-1 text-[10px] font-medium text-gray-300 text-zinc-700">
+                                <span className="flex items-center gap-1 text-[10px] font-medium text-zinc-600">
                                   <CloseCircle size={13} color="currentColor" />
                                   Off
                                 </span>
@@ -378,8 +376,6 @@ export default function ProfilePage() {
                 </p>
               </div>
             </div>
-
-
           </div>
         </div>
       </div>
