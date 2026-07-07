@@ -12,7 +12,6 @@ import {
   DocumentText,
   ArrowDown2,
   ArrowUp2,
-
   Receipt21,
 } from "iconsax-react";
 import Layout from "../../../layout/Layout";
@@ -81,16 +80,14 @@ function localTierToInput(tier: LocalTier, sort_order: number): AmountTierInput 
   };
 }
 
-
-
 // ─── Stat Card ────────────────────────────────────────────────────────────────
 
 function StatCard({ label, value, sub }: { label: string; value: string | number; sub: string }) {
   return (
-    <div className="bg-whit bg-zinc-900/50 border border-gray-200 border-zinc-800/80 rounded-xl p-5 flex flex-col justify-between shadow-sm">
-      <p className="text-xs text-gray-500 text-zinc-400 font-medium mb-3">{label}</p>
-      <p className="text-2xl font-medium text-gray-900 text-zinc-50 tracking-tight">{value}</p>
-      <p className="text-[11px] text-gray-400 text-zinc-500 mt-2">{sub}</p>
+    <div className="bg-zinc-900/50 border border-zinc-800/80 rounded-xl p-4 sm:p-5 flex flex-col justify-between shadow-sm min-w-0">
+      <p className="text-xs text-zinc-400 font-medium mb-3 truncate">{label}</p>
+      <p className="text-xl sm:text-2xl font-medium text-zinc-50 tracking-tight truncate">{value}</p>
+      <p className="text-[11px] text-zinc-500 mt-2">{sub}</p>
     </div>
   );
 }
@@ -143,32 +140,32 @@ function CreateChainModal({ voucherTypes, departments, existingVoucherTypeIds, o
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm bg-black/60">
-      <div className="relative bg-white bg-zinc-900 border border-gray-200 border-zinc-800 rounded-xl w-full max-w-2xl shadow-2xl flex flex-col max-h-[92vh] overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 backdrop-blur-sm bg-black/60">
+      <div className="relative bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-2xl shadow-2xl flex flex-col max-h-[92vh] overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 border-zinc-800 bg-gray-50 bg-zinc-900/50">
-          <div className="flex items-center gap-3">
-            <Receipt21 size={18} color="currentColor" className="text-gray-500 text-zinc-400" />
-            <h2 className="text-sm font-medium text-gray-900 text-zinc-100">New Approval Chain</h2>
+        <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-zinc-800 bg-zinc-900/50">
+          <div className="flex items-center gap-3 min-w-0">
+            <Receipt21 size={18} color="currentColor" className="text-zinc-400 flex-shrink-0" />
+            <h2 className="text-sm font-medium text-zinc-100 truncate">New Approval Chain</h2>
           </div>
-          <button onClick={onClose} className="text-gray-400 text-zinc-500 hover:text-gray-600 hover:text-zinc-300">
+          <button onClick={onClose} className="text-zinc-500 hover:text-zinc-300 flex-shrink-0 transition-colors">
             <CloseCircle size={18} color="currentColor" />
           </button>
         </div>
 
-        <div className="p-6 overflow-y-auto space-y-6 flex-1 bg-gray-50/50 bg-zinc-950/30">
+        <div className="p-4 sm:p-6 overflow-y-auto space-y-6 flex-1 bg-zinc-950/30">
           {/* Voucher type selector */}
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-gray-600 text-zinc-400">Voucher Type</label>
+            <label className="text-xs font-medium text-zinc-400">Voucher Type</label>
             {available.length === 0 ? (
-              <p className="text-xs text-gray-400 text-zinc-500 py-3 text-center border border-dashed border-gray-200 border-zinc-800 rounded-lg">
+              <p className="text-xs text-zinc-500 py-3 text-center border border-dashed border-zinc-800 rounded-lg px-2">
                 All voucher types already have approval chains.
               </p>
             ) : (
               <select
                 value={selectedTypeId}
                 onChange={(e) => setSelectedTypeId(e.target.value)}
-                className="w-full text-sm bg-white bg-zinc-950 border border-gray-200 border-zinc-800 rounded-lg px-3 py-2 outline-none focus:border-gray-400 focus:border-zinc-600 text-gray-900 text-zinc-200"
+                className="w-full text-sm bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 outline-none focus:border-zinc-600 text-zinc-200 transition-colors"
               >
                 {available.map((vt) => (
                   <option key={vt.id} value={vt.id}>{vt.name}</option>
@@ -178,9 +175,9 @@ function CreateChainModal({ voucherTypes, departments, existingVoucherTypeIds, o
           </div>
 
           {departments.length === 0 && (
-            <div className="flex items-start gap-3 bg-gray-100 bg-zinc-800/50 border border-gray-200 border-zinc-700/50 rounded-xl px-4 py-3">
-              <Warning2 size={16} color="currentColor" className="text-gray-500 text-zinc-400 mt-0.5" />
-              <p className="text-xs text-gray-600 text-zinc-400">
+            <div className="flex items-start gap-3 bg-zinc-800/50 border border-zinc-700/50 rounded-xl px-4 py-3">
+              <Warning2 size={16} color="currentColor" className="text-zinc-400 mt-0.5 flex-shrink-0" />
+              <p className="text-xs text-zinc-400">
                 No departments exist yet. Create at least one department before assigning approval steps.
               </p>
             </div>
@@ -200,14 +197,14 @@ function CreateChainModal({ voucherTypes, departments, existingVoucherTypeIds, o
           />
         </div>
 
-        <div className="p-4 border-t border-gray-200 border-zinc-800 flex justify-end gap-3 bg-gray-50 bg-zinc-900/80">
-          <button onClick={onClose} disabled={isPending} className="px-4 py-2 rounded-lg text-sm text-gray-600 text-zinc-400 font-medium hover:bg-gray-200 hover:bg-zinc-800 disabled:opacity-40">
+        <div className="p-4 border-t border-zinc-800 flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 bg-zinc-900/80">
+          <button onClick={onClose} disabled={isPending} className="px-4 py-2 rounded-lg text-sm text-zinc-400 font-medium hover:bg-zinc-800 disabled:opacity-40 transition-colors order-2 sm:order-1">
             Cancel
           </button>
           <button
             onClick={() => onSave(selectedTypeId, tiers.map((t, i) => localTierToInput(t, i)))}
             disabled={!canSave || isPending || available.length === 0}
-            className="px-5 py-2 rounded-lg bg-gray-900 bg-zinc-100 text-sm text-white text-zinc-900 font-medium hover:bg-black hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+            className="px-5 py-2 rounded-lg bg-zinc-100 text-sm text-zinc-900 font-medium hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed transition-all order-1 sm:order-2"
           >
             {isPending ? "Creating…" : "Create Chain"}
           </button>
@@ -262,20 +259,20 @@ function EditChainModal({ chain, departments, onClose, onSave, isPending }: Edit
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm bg-black/60">
-      <div className="relative bg-white bg-zinc-900 border border-gray-200 border-zinc-800 rounded-xl w-full max-w-2xl shadow-2xl flex flex-col max-h-[92vh] overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 backdrop-blur-sm bg-black/60">
+      <div className="relative bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-2xl shadow-2xl flex flex-col max-h-[92vh] overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 border-zinc-800 bg-gray-50 bg-zinc-900/50">
-          <div>
-            <h2 className="text-sm font-medium text-gray-900 text-zinc-100">Edit Approval Chain</h2>
-            <p className="text-[11px] text-zinc-500 mt-0.5">{voucherTypeName} configuration</p>
+        <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-zinc-800 bg-zinc-900/50">
+          <div className="min-w-0">
+            <h2 className="text-sm font-medium text-zinc-100 truncate">Edit Approval Chain</h2>
+            <p className="text-[11px] text-zinc-500 mt-0.5 truncate">{voucherTypeName} configuration</p>
           </div>
-          <button onClick={onClose} className="text-gray-400 text-zinc-500 hover:text-gray-600 hover:text-zinc-300">
+          <button onClick={onClose} className="text-zinc-500 hover:text-zinc-300 flex-shrink-0 transition-colors">
             <CloseCircle size={18} color="currentColor" />
           </button>
         </div>
 
-        <div className="p-6 overflow-y-auto space-y-6 flex-1 bg-gray-50/50 bg-zinc-950/30">
+        <div className="p-4 sm:p-6 overflow-y-auto space-y-6 flex-1 bg-zinc-950/30">
           <TierEditor
             tiers={tiers}
             departments={departments}
@@ -289,14 +286,14 @@ function EditChainModal({ chain, departments, onClose, onSave, isPending }: Edit
           />
         </div>
 
-        <div className="p-4 border-t border-gray-200 border-zinc-800 flex justify-end gap-3 bg-gray-50 bg-zinc-900/80">
-          <button onClick={onClose} disabled={isPending} className="px-4 py-2 rounded-lg text-sm text-gray-600 text-zinc-400 font-medium hover:bg-gray-200 hover:bg-zinc-800 disabled:opacity-40">
+        <div className="p-4 border-t border-zinc-800 flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 bg-zinc-900/80">
+          <button onClick={onClose} disabled={isPending} className="px-4 py-2 rounded-lg text-sm text-zinc-400 font-medium hover:bg-zinc-800 disabled:opacity-40 transition-colors order-2 sm:order-1">
             Cancel
           </button>
           <button
             onClick={() => onSave(chain.id, tiers.map((t, i) => localTierToInput(t, i)))}
             disabled={isPending}
-            className="px-5 py-2 rounded-lg bg-gray-900 bg-zinc-100 text-sm text-white text-zinc-900 font-medium hover:bg-black hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+            className="px-5 py-2 rounded-lg bg-zinc-100 text-sm text-zinc-900 font-medium hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed transition-all order-1 sm:order-2"
           >
             {isPending ? "Saving…" : "Save Configuration"}
           </button>
@@ -326,102 +323,102 @@ function TierEditor({ tiers, departments, onAddTier, onRemoveTier, onUpdateTier,
   return (
     <div className="space-y-4">
       {tiers.length === 0 && (
-        <div className="py-12 flex flex-col items-center justify-center border border-dashed border-gray-300 border-zinc-800 rounded-xl text-center bg-white bg-zinc-900/20">
-          <div className="text-gray-400 text-zinc-600 mb-3">
+        <div className="py-10 sm:py-12 flex flex-col items-center justify-center border border-dashed border-zinc-800 rounded-xl text-center bg-zinc-900/20 px-4">
+          <div className="text-zinc-600 mb-3">
             <Hierarchy size={28} color="currentColor" />
           </div>
-          <p className="text-sm text-gray-700 text-zinc-300 font-medium">No tiers defined yet</p>
+          <p className="text-sm text-zinc-300 font-medium">No tiers defined yet</p>
           <p className="text-xs text-zinc-500 mt-1">Add an amount tier to start building this approval chain.</p>
         </div>
       )}
 
       {tiers.map((tier, tIdx) => (
-        <div key={tier.id} className="bg-white bg-zinc-900/80 border border-gray-200 border-zinc-800/80 rounded-xl overflow-hidden shadow-sm">
+        <div key={tier.id} className="bg-zinc-900/80 border border-zinc-800/80 rounded-xl overflow-hidden shadow-sm">
           {/* Tier header */}
-          <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-200 border-zinc-800/80 bg-gray-50 bg-zinc-900/90">
-            <div className="w-5 h-5 rounded bg-gray-100 bg-zinc-800 border border-gray-200 border-zinc-700 flex items-center justify-center text-[10px] font-bold text-gray-500 text-zinc-400 flex-shrink-0">
+          <div className="flex items-center gap-3 px-4 py-3 border-b border-zinc-800/80 bg-zinc-900/90">
+            <div className="w-5 h-5 rounded bg-zinc-800 border border-zinc-700 flex items-center justify-center text-[10px] font-bold text-zinc-400 flex-shrink-0">
               {tIdx + 1}
             </div>
             <input
               value={tier.label}
               placeholder="Tier Name (e.g., Medium)"
               onChange={(e) => onUpdateTier(tier.id, { label: e.target.value })}
-              className="bg-transparent text-sm font-medium text-gray-900 text-zinc-100 focus:outline-none border-b border-transparent focus:border-gray-300 focus:border-zinc-600 transition-all flex-1 min-w-0"
+              className="bg-transparent text-sm font-medium text-zinc-100 focus:outline-none border-b border-transparent focus:border-zinc-600 transition-all flex-1 min-w-0"
             />
-            <button onClick={() => onRemoveTier(tier.id)} className="p-1.5 text-gray-400 text-zinc-500 hover:text-red-500 hover:text-red-400 hover:bg-gray-100 hover:bg-zinc-800 rounded-md transition-colors flex-shrink-0">
+            <button onClick={() => onRemoveTier(tier.id)} className="p-1.5 text-zinc-500 hover:text-red-400 hover:bg-zinc-800 rounded-md transition-colors flex-shrink-0">
               <Trash size={14} color="currentColor" />
             </button>
           </div>
 
-          <div className="p-5 space-y-5">
+          <div className="p-4 sm:p-5 space-y-5">
             {/* Amount range */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-gray-500 text-zinc-400 mb-1.5">Min Amount (₦)</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1.5">Min Amount (₦)</label>
                 <input
                   type="number"
                   value={tier.min_amount}
                   onChange={(e) => onUpdateTier(tier.id, { min_amount: parseInt(e.target.value) || 0 })}
-                  className="w-full bg-white bg-zinc-950 border border-gray-200 border-zinc-800 rounded-lg px-3 py-2 text-sm text-gray-900 text-zinc-200 focus:outline-none focus:border-gray-400 focus:border-zinc-600 font-mono"
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-200 focus:outline-none focus:border-zinc-600 font-mono transition-colors"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-500 text-zinc-400 mb-1.5">Max Amount (₦)</label>
+                <label className="block text-xs font-medium text-zinc-400 mb-1.5">Max Amount (₦)</label>
                 <input
                   type="number"
                   value={tier.max_amount ?? ""}
                   placeholder="Unlimited (Leave blank)"
                   onChange={(e) => onUpdateTier(tier.id, { max_amount: e.target.value ? parseInt(e.target.value) : null })}
-                  className="w-full bg-white bg-zinc-950 border border-gray-200 border-zinc-800 rounded-lg px-3 py-2 text-sm text-gray-900 text-zinc-200 placeholder-gray-400 placeholder-zinc-600 focus:outline-none focus:border-gray-400 focus:border-zinc-600 font-mono"
+                  className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-zinc-600 font-mono transition-colors"
                 />
               </div>
             </div>
 
             {/* Approval steps */}
             <div className="pt-2">
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between mb-3 gap-2">
                 <p className="text-[10px] font-medium text-zinc-500 uppercase tracking-widest">Approval Sequence</p>
                 <button
                   onClick={() => onAddStep(tier.id)}
                   disabled={noDepartments}
-                  className="flex items-center gap-1.5 text-[11px] font-medium text-gray-600 text-zinc-300 hover:text-gray-900 hover:text-white bg-gray-100 bg-zinc-800 hover:bg-gray-200 hover:bg-zinc-700 px-2 py-1 rounded-md border border-gray-200 border-zinc-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="flex items-center gap-1.5 text-[11px] font-medium text-zinc-300 hover:text-white bg-zinc-800 hover:bg-zinc-700 px-2 py-1 rounded-md border border-zinc-700 transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
                 >
                   <Add size={12} color="currentColor" /> Add Step
                 </button>
               </div>
 
               {tier.steps.length === 0 ? (
-                <div className="text-center py-4 border border-dashed border-gray-200 border-zinc-800 rounded-lg bg-pri/50">
+                <div className="text-center py-4 border border-dashed border-zinc-800 rounded-lg bg-pri/50 px-2">
                   <p className="text-xs text-zinc-500">No approvers required for this tier.</p>
                 </div>
               ) : (
                 <div className="space-y-2">
                   {tier.steps.map((step, sIdx) => (
-                    <div key={step.id} className="flex items-center gap-3 bg-pri border border-gray-200 border-zinc-800 rounded-lg px-3 py-2.5 group hover:border-gray-300 hover:border-zinc-700 transition-all">
-                      <div className="w-5 h-5 rounded-full bg-white bg-zinc-900 border border-gray-200 border-zinc-800 flex items-center justify-center text-[10px] font-bold text-zinc-500 flex-shrink-0">
+                    <div key={step.id} className="flex items-center gap-2 sm:gap-3 bg-pri border border-zinc-800 rounded-lg px-2 sm:px-3 py-2.5 group hover:border-zinc-700 transition-all">
+                      <div className="w-5 h-5 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-[10px] font-bold text-zinc-500 flex-shrink-0">
                         {sIdx + 1}
                       </div>
                       <select
                         value={step.department_id}
                         onChange={(e) => onUpdateStep(tier.id, step.id, e.target.value)}
-                        className="flex-1 bg-transparent text-xs text-gray-800 text-zinc-200 font-medium focus:outline-none appearance-none cursor-pointer"
+                        className="flex-1 min-w-0 bg-transparent text-xs text-zinc-200 font-medium focus:outline-none appearance-none cursor-pointer"
                       >
                         {!step.department_id && (
-                          <option value="" className="bg-white bg-zinc-900">Select department</option>
+                          <option value="" className="bg-zinc-900">Select department</option>
                         )}
                         {departments.map((d) => (
-                          <option key={d.id} value={d.id} className="bg-white bg-zinc-900">{d.name}</option>
+                          <option key={d.id} value={d.id} className="bg-zinc-900">{d.name}</option>
                         ))}
                       </select>
-                      <div className="flex items-center gap-1 flex-shrink-0 opacity-40 group-hover:opacity-100 transition-opacity text-gray-500 text-zinc-400">
-                        <button onClick={() => onMoveStep(tier.id, step.id, "up")} disabled={sIdx === 0} className="p-1.5 hover:text-gray-900 hover:text-zinc-100 disabled:opacity-20 hover:bg-gray-200 hover:bg-zinc-800 rounded-md">
+                      <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0 opacity-70 sm:opacity-40 group-hover:opacity-100 transition-opacity text-zinc-400">
+                        <button onClick={() => onMoveStep(tier.id, step.id, "up")} disabled={sIdx === 0} className="p-1.5 hover:text-zinc-100 disabled:opacity-20 hover:bg-zinc-800 rounded-md transition-colors">
                           <ArrowUp2 size={12} color="currentColor" />
                         </button>
-                        <button onClick={() => onMoveStep(tier.id, step.id, "down")} disabled={sIdx === tier.steps.length - 1} className="p-1.5 hover:text-gray-900 hover:text-zinc-100 disabled:opacity-20 hover:bg-gray-200 hover:bg-zinc-800 rounded-md">
+                        <button onClick={() => onMoveStep(tier.id, step.id, "down")} disabled={sIdx === tier.steps.length - 1} className="p-1.5 hover:text-zinc-100 disabled:opacity-20 hover:bg-zinc-800 rounded-md transition-colors">
                           <ArrowDown2 size={12} color="currentColor" />
                         </button>
-                        <div className="w-px h-4 bg-gray-300 bg-zinc-800 mx-1" />
-                        <button onClick={() => onRemoveStep(tier.id, step.id)} className="p-1.5 hover:text-red-500 hover:text-red-400 hover:bg-gray-200 hover:bg-zinc-800 rounded-md">
+                        <div className="w-px h-4 bg-zinc-800 mx-1 hidden sm:block" />
+                        <button onClick={() => onRemoveStep(tier.id, step.id)} className="p-1.5 hover:text-red-400 hover:bg-zinc-800 rounded-md transition-colors">
                           <CloseCircle size={14} color="currentColor" />
                         </button>
                       </div>
@@ -436,7 +433,7 @@ function TierEditor({ tiers, departments, onAddTier, onRemoveTier, onUpdateTier,
 
       <button
         onClick={onAddTier}
-        className="w-full flex items-center justify-center gap-2 py-3 border border-dashed border-gray-300 border-zinc-800 bg-gray-50 bg-zinc-900/20 rounded-xl text-xs font-medium text-gray-500 text-zinc-400 hover:border-gray-400 hover:border-zinc-600 hover:text-gray-700 hover:text-zinc-200 transition-all"
+        className="w-full flex items-center justify-center gap-2 py-3 border border-dashed border-zinc-800 bg-zinc-900/20 rounded-xl text-xs font-medium text-zinc-400 hover:border-zinc-600 hover:text-zinc-200 transition-all"
       >
         <Add size={14} color="currentColor" /> Add New Amount Tier
       </button>
@@ -452,46 +449,46 @@ function ChainCard({ chain, onEdit }: { chain: ApprovalChain; onEdit: () => void
   const voucherTypeName = chain.voucher_type?.name ?? "Unknown Type";
 
   return (
-    <div className="bg-white bg-zinc-900/50 border border-gray-200 border-zinc-800/80 hover:border-gray-300 hover:border-zinc-700 rounded-xl transition-all flex flex-col shadow-sm hover:shadow-md overflow-hidden">
+    <div className="bg-zinc-900/50 border border-zinc-800/80 hover:border-zinc-700 rounded-xl transition-all flex flex-col shadow-sm hover:shadow-md overflow-hidden min-w-0">
       {/* Card Header */}
-      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 border-zinc-800/50 bg-gray-50 bg-zinc-900/30">
-        <div>
-          <h3 className="text-sm font-semibold text-gray-900 text-zinc-100">{voucherTypeName}</h3>
-          <p className="text-[11px] text-zinc-500 mt-0.5">
+      <div className="flex items-center justify-between gap-2 px-4 sm:px-5 py-4 border-b border-zinc-800/50 bg-zinc-900/30">
+        <div className="min-w-0">
+          <h3 className="text-sm font-semibold text-zinc-100 truncate">{voucherTypeName}</h3>
+          <p className="text-[11px] text-zinc-500 mt-0.5 truncate">
             {hasChain
               ? `${chain.tiers.length} tier${chain.tiers.length !== 1 ? "s" : ""} · max depth ${maxDepth}`
               : "No chain configured"}
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
           {hasChain ? (
-            <div className="hidden sm:flex items-center gap-1.5 px-2 py-1 rounded-md border border-gray-200 border-zinc-700 bg-gray-100 bg-zinc-800 text-gray-600 text-zinc-300">
+            <div className="hidden sm:flex items-center gap-1.5 px-2 py-1 rounded-md border border-zinc-700 bg-zinc-800 text-zinc-300">
               <TickCircle size={12} color="currentColor" />
               <span className="text-[10px] font-medium">Active</span>
             </div>
           ) : (
-            <div className="hidden sm:flex items-center gap-1.5 px-2 py-1 rounded-md border border-gray-200 border-zinc-700 bg-gray-100 bg-zinc-800 text-gray-600 text-zinc-300">
+            <div className="hidden sm:flex items-center gap-1.5 px-2 py-1 rounded-md border border-zinc-700 bg-zinc-800 text-zinc-300">
               <Warning2 size={12} color="currentColor" />
               <span className="text-[10px] font-medium">Needs Setup</span>
             </div>
           )}
-          <button onClick={onEdit} className="p-1.5 rounded-md bg-gray-100 bg-zinc-800/50 border border-gray-200 border-zinc-700/50 text-gray-500 text-zinc-400 hover:text-gray-900 hover:text-zinc-100 hover:bg-gray-200 hover:bg-zinc-700 transition-colors">
+          <button onClick={onEdit} className="p-1.5 rounded-md bg-zinc-800/50 border border-zinc-700/50 text-zinc-400 hover:text-zinc-100 hover:bg-zinc-700 transition-colors">
             <Edit2 size={14} color="currentColor" />
           </button>
         </div>
       </div>
 
       {/* Tier list */}
-      <div className="flex-1 p-5 space-y-4">
+      <div className="flex-1 p-4 sm:p-5 space-y-4">
         {!hasChain && (
-          <div className="py-10 flex flex-col items-center justify-center border border-dashed border-gray-200 border-zinc-800 rounded-xl text-center bg-pri/30">
-            <div className="text-gray-400 text-zinc-600 mb-3">
+          <div className="py-8 sm:py-10 flex flex-col items-center justify-center border border-dashed border-zinc-800 rounded-xl text-center bg-pri/30 px-4">
+            <div className="text-zinc-600 mb-3">
               <Setting2 size={24} color="currentColor" />
             </div>
-            <p className="text-xs font-medium text-gray-500 text-zinc-400 mb-3">Workflow not defined</p>
+            <p className="text-xs font-medium text-zinc-400 mb-3">Workflow not defined</p>
             <button
               onClick={onEdit}
-              className="text-[11px] font-medium text-gray-900 text-zinc-900 bg-white bg-zinc-100 border border-gray-300 border-transparent hover:bg-gray-50 hover:bg-white px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 shadow-sm"
+              className="text-[11px] font-medium text-zinc-900 bg-zinc-100 border border-transparent hover:bg-white px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 shadow-sm"
             >
               <Add size={14} color="currentColor" /> Configure Workflow
             </button>
@@ -502,30 +499,30 @@ function ChainCard({ chain, onEdit }: { chain: ApprovalChain; onEdit: () => void
           .slice()
           .sort((a, b) => a.sort_order - b.sort_order)
           .map((tier, tIdx) => (
-            <div key={tier.id} className="bg-pri/50 border border-gray-200 border-zinc-800/50 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-5 h-5 rounded bg-white bg-zinc-800 border border-gray-200 border-zinc-700 flex items-center justify-center text-[10px] font-bold text-gray-500 text-zinc-400">
+            <div key={tier.id} className="bg-pri/50 border border-zinc-800/50 rounded-lg p-3 sm:p-4">
+              <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-5 h-5 rounded bg-zinc-800 border border-zinc-700 flex items-center justify-center text-[10px] font-bold text-zinc-400 flex-shrink-0">
                     {tIdx + 1}
                   </div>
-                  <span className="text-xs font-semibold text-gray-800 text-zinc-200">{tier.label}</span>
+                  <span className="text-xs font-semibold text-zinc-200 truncate">{tier.label}</span>
                 </div>
-                <span className="text-[10px] font-mono font-medium text-gray-500 text-zinc-400 bg-white bg-zinc-900 border border-gray-200 border-zinc-800 px-2 py-1 rounded">
+                <span className="text-[10px] font-mono font-medium text-zinc-400 bg-zinc-900 border border-zinc-800 px-2 py-1 rounded whitespace-nowrap">
                   {formatRange(tier)}
                 </span>
               </div>
-              <div className="flex items-center gap-2 flex-wrap bg-white bg-zinc-900/40 p-2.5 rounded-lg border border-gray-200 border-zinc-800/50">
+              <div className="flex items-center gap-2 flex-wrap bg-zinc-900/40 p-2.5 rounded-lg border border-zinc-800/50">
                 {tier.steps
                   .slice()
                   .sort((a, b) => a.step_order - b.step_order)
                   .map((step, sIdx) => (
                     <React.Fragment key={step.id}>
-                      <div className="flex items-center gap-1.5 px-2.5 py-1.5 border rounded-md text-[10px] font-medium bg-gray-100 bg-zinc-800 text-gray-700 text-zinc-300 border-gray-200 border-zinc-700">
-                        <span className="w-3.5 h-3.5 rounded-full bg-black/10 bg-black/20 flex items-center justify-center text-[8px] font-bold">{sIdx + 1}</span>
-                        {step.department?.name ?? "Unknown Department"}
+                      <div className="flex items-center gap-1.5 px-2.5 py-1.5 border rounded-md text-[10px] font-medium bg-zinc-800 text-zinc-300 border-zinc-700">
+                        <span className="w-3.5 h-3.5 rounded-full bg-black/20 flex items-center justify-center text-[8px] font-bold flex-shrink-0">{sIdx + 1}</span>
+                        <span className="truncate max-w-[120px]">{step.department?.name ?? "Unknown Department"}</span>
                       </div>
                       {sIdx < tier.steps.length - 1 && (
-                        <ArrowRight2 size={12} className="text-gray-400 text-zinc-600 flex-shrink-0" color="currentColor" />
+                        <ArrowRight2 size={12} className="text-zinc-600 flex-shrink-0" color="currentColor" />
                       )}
                     </React.Fragment>
                   ))}
@@ -578,28 +575,28 @@ export default function ApprovalChainsPage() {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-pri text-gray-900 text-zinc-300 font-sans pb-16">
+      <div className="min-h-screen bg-zinc-950 text-zinc-300 font-sans pb-16 selection:bg-zinc-800 selection:text-zinc-100">
 
         {/* Top Nav */}
-        <div className="border-b border-gray-200 border-zinc-800/80 bg-white/80 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-10">
-          <div className="px-6 h-16 flex items-center justify-between max-w-7xl mx-auto">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-gray-100 bg-zinc-900 rounded-lg border border-gray-200 border-zinc-800/80 shadow-sm text-gray-600 text-zinc-400">
+        <div className="border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-10">
+          <div className="px-4 sm:px-6 py-3 sm:py-0 sm:h-16 flex flex-col sm:flex-row sm:items-center justify-between gap-3 max-w-7xl mx-auto">
+            <div className="flex items-center gap-3 min-w-0 flex-wrap">
+              <div className="p-2 bg-zinc-900 rounded-lg border border-zinc-800/80 shadow-sm text-zinc-400 flex-shrink-0">
                 <Hierarchy size={18} color="currentColor" />
               </div>
-              <h1 className="text-sm font-medium text-gray-900 text-zinc-100">Approval Workflows</h1>
-              <span className="ml-2 bg-gray-100 bg-zinc-900 border border-gray-200 border-zinc-800 text-gray-500 text-zinc-400 text-[11px] px-2.5 py-0.5 rounded-full font-mono">
+              <h1 className="text-sm font-medium text-zinc-100 truncate">Approval Workflows</h1>
+              <span className="bg-zinc-900 border border-zinc-800 text-zinc-400 text-[11px] px-2.5 py-0.5 rounded-full font-mono whitespace-nowrap">
                 {chains.length} chains
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <button className="flex items-center gap-1.5 bg-white bg-zinc-900 hover:bg-gray-50 hover:bg-zinc-800 transition-all text-gray-700 text-zinc-300 text-xs font-medium px-4 py-2 rounded-lg border border-gray-200 border-zinc-800 shadow-sm">
-                <DocumentText size={14} color="currentColor" /> Export Config
+              <button className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 bg-zinc-900 hover:bg-zinc-800 transition-all text-zinc-300 text-xs font-medium px-4 py-2 rounded-lg border border-zinc-800 shadow-sm">
+                <DocumentText size={14} color="currentColor" /> <span className="hidden sm:inline">Export Config</span><span className="sm:hidden">Export</span>
               </button>
               <button
                 onClick={() => setShowCreate(true)}
                 disabled={(existingVoucherTypeIds.size >= voucherTypes.length && voucherTypes.length > 0)}
-                className="flex items-center gap-1.5 bg-gray-900 bg-zinc-100 hover:bg-black hover:bg-white text-white text-zinc-900 text-xs font-medium px-4 py-2 rounded-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 bg-zinc-100 hover:bg-white text-zinc-900 text-xs font-medium px-4 py-2 rounded-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 <Add size={14} color="currentColor" /> New Chain
               </button>
@@ -607,10 +604,10 @@ export default function ApprovalChainsPage() {
           </div>
         </div>
 
-        <div className="px-6 py-8 max-w-7xl mx-auto space-y-10">
+        <div className="px-4 sm:px-6 py-6 sm:py-8 max-w-7xl mx-auto space-y-8 sm:space-y-10">
 
           {/* KPI Row */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
             <StatCard label="Voucher Types" value={voucherTypes.length} sub="Active issue categories" />
             <StatCard label="Configured Chains" value={`${configured}/${chains.length}`} sub={chains.length - configured > 0 ? `${chains.length - configured} workflows need setup` : "All workflows complete"} />
             <StatCard label="Total Tiers" value={totalTiers} sub="Granular rules created" />
@@ -619,13 +616,13 @@ export default function ApprovalChainsPage() {
 
           {/* Warning banner */}
           {chains.some((c) => c.tiers.length === 0) && (
-            <div className="flex items-start gap-3 bg-gray-100 bg-zinc-800/50 border border-gray-200 border-zinc-700/50 rounded-xl px-5 py-4">
-              <div className="text-gray-600 text-zinc-400 mt-0.5">
+            <div className="flex items-start gap-3 bg-zinc-800/50 border border-zinc-700/50 rounded-xl px-4 sm:px-5 py-4">
+              <div className="text-zinc-400 mt-0.5 flex-shrink-0">
                 <Warning2 size={18} color="currentColor" />
               </div>
-              <div>
-                <p className="text-sm font-medium text-gray-900 text-zinc-200">Missing Configurations Detected</p>
-                <p className="text-xs text-gray-600 text-zinc-400 mt-1 leading-relaxed">
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-zinc-200">Missing Configurations Detected</p>
+                <p className="text-xs text-zinc-400 mt-1 leading-relaxed">
                   Vouchers belonging to unconfigured types cannot be submitted. Define at least one amount tier and approval path for all chains below.
                 </p>
               </div>
@@ -639,22 +636,19 @@ export default function ApprovalChainsPage() {
 
           {/* Empty */}
           {!isLoading && chains.length === 0 && (
-            <div className="text-sm text-gray-400 text-zinc-500 text-center py-16 border border-dashed border-gray-200 border-zinc-800 rounded-xl">
+            <div className="text-sm text-zinc-500 text-center py-16 border border-dashed border-zinc-800 rounded-xl px-4">
               No approval chains yet. Create one to define a workflow.
             </div>
           )}
 
           {/* Chain Cards */}
           {!isLoading && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 items-start">
               {chains.map((chain) => (
                 <ChainCard key={chain.id} chain={chain} onEdit={() => setEditingChain(chain)} />
               ))}
             </div>
           )}
-
-          {/* Departments Legend */}
-
         </div>
 
         {/* Modals */}

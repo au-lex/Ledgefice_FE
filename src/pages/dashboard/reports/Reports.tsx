@@ -36,8 +36,6 @@ import {
   type ReportRange,
 } from "../../../api/hooks/useReports";
 
-
-
 const APPROVAL_TURNAROUND = [
   { name: "< 1 hr", count: 12 },
   { name: "1–4 hrs", count: 28 },
@@ -86,7 +84,7 @@ function fmtFull(n: number) {
 function CustomTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2.5 shadow-xl text-xs">
+    <div className="bg-zinc-900 border border-zinc-800/80 rounded-lg px-3 py-2.5 shadow-xl text-xs">
       <p className="text-zinc-400 mb-1.5 font-medium">{label}</p>
       {payload.map((p: any, i: number) => (
         <div key={i} className="flex items-center gap-2 text-zinc-200">
@@ -102,7 +100,7 @@ function CustomTooltip({ active, payload, label }: any) {
 function BarTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2.5 shadow-xl text-xs">
+    <div className="bg-zinc-900 border border-zinc-800/80 rounded-lg px-3 py-2.5 shadow-xl text-xs">
       <p className="text-zinc-400 mb-1 font-medium">{label}</p>
       <p className="text-zinc-200 font-mono">{payload[0]?.value} vouchers</p>
     </div>
@@ -129,10 +127,12 @@ function StatCard({
   isLoading?: boolean;
 }) {
   return (
-    <div className="bg-zinc-900/80 border border-zinc-800/80 rounded-xl p-4 sm:p-5 flex flex-col gap-3 sm:gap-4 shadow-sm min-w-0">
+    <div className="bg-zinc-900/50 border border-zinc-800/80 rounded-xl p-4 sm:p-5 flex flex-col gap-3 sm:gap-4 shadow-sm min-w-0 transition-colors">
       <div className="flex items-start justify-between gap-2">
         <p className="text-xs text-zinc-400 font-medium truncate">{label}</p>
-        <div className="p-1.5 bg-zinc-800 rounded-lg border border-zinc-700/60 text-zinc-400 flex-shrink-0">{icon}</div>
+        <div className="p-1.5 bg-zinc-800 rounded-lg border border-zinc-700/60 text-zinc-400 flex-shrink-0">
+          {icon}
+        </div>
       </div>
       <div>
         <p className="text-xl sm:text-2xl font-semibold text-zinc-50 tracking-tight leading-none truncate">
@@ -167,7 +167,9 @@ function StatCard({
 function SectionHeader({ icon, title, sub }: { icon: React.ReactNode; title: string; sub?: string }) {
   return (
     <div className="flex items-center gap-3 mb-5">
-      <div className="p-1.5 bg-zinc-800 rounded-lg border border-zinc-700/60 text-zinc-400 flex-shrink-0">{icon}</div>
+      <div className="p-1.5 bg-zinc-800 rounded-lg border border-zinc-700/60 text-zinc-400 flex-shrink-0">
+        {icon}
+      </div>
       <div className="min-w-0">
         <h2 className="text-sm font-semibold text-zinc-100">{title}</h2>
         {sub && <p className="text-[11px] text-zinc-500 mt-0.5">{sub}</p>}
@@ -235,44 +237,44 @@ export default function ReportsPage() {
         <div className="border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-10">
           <div className="px-4 sm:px-6 py-3 sm:py-0 sm:h-16 flex flex-col sm:flex-row sm:items-center justify-between gap-3 max-w-7xl mx-auto">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-zinc-900 rounded-lg border border-zinc-800/80 flex-shrink-0">
-                <Chart size={18} color="currentColor" className="text-zinc-400" />
+              <div className="p-2 bg-zinc-900 rounded-lg border border-zinc-800/80 flex-shrink-0 shadow-sm text-zinc-400">
+                <Chart size={18} color="currentColor" />
               </div>
               <h1 className="text-sm font-medium text-zinc-100">Reports & Analytics</h1>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
               {/* Date range pills */}
-              <div className="flex items-center bg-zinc-900 border border-zinc-800 rounded-lg p-1 gap-1 overflow-x-auto">
+              <div className="flex items-center bg-zinc-950 border border-zinc-800/80 rounded-lg p-1 gap-1 overflow-x-auto shadow-sm">
                 {(["7d", "30d", "90d", "12m"] as ReportRange[]).map((r) => (
                   <button
                     key={r}
                     onClick={() => setRange(r)}
-                    className={`px-2.5 sm:px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
-                      range === r ? "bg-zinc-700 text-zinc-100 shadow-sm" : "text-zinc-500 hover:text-zinc-300"
+                    className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
+                      range === r ? "bg-zinc-800 text-zinc-100 shadow-sm" : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900"
                     }`}
                   >
                     {r}
                   </button>
                 ))}
               </div>
-              <button className="flex items-center gap-1.5 bg-zinc-900 hover:bg-zinc-800 transition-all text-zinc-300 text-sm font-medium px-3 sm:px-4 py-2 rounded-lg border border-zinc-800 shadow-sm whitespace-nowrap">
-                <DocumentDownload size={15} color="currentColor" />
+              <button className="flex items-center gap-1.5 bg-zinc-900 hover:bg-zinc-800 transition-all text-zinc-300 text-xs font-medium px-4 py-2 rounded-lg border border-zinc-800 shadow-sm whitespace-nowrap h-[34px]">
+                <DocumentDownload size={14} color="currentColor" />
                 <span className="hidden sm:inline">Export</span>
               </button>
             </div>
           </div>
         </div>
 
-        <div className="px-4 sm:px-6 py-6 sm:py-8 max-w-7xl mx-auto space-y-8 sm:space-y-10">
+        <div className="px-4 sm:px-6 py-6 sm:py-8 max-w-7xl mx-auto space-y-6 sm:space-y-8">
           {/* Range label */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 px-1">
             <Calendar size={14} color="currentColor" className="text-zinc-500 flex-shrink-0" />
             <p className="text-xs text-zinc-500">{RANGE_LABELS[range]} · All departments</p>
           </div>
 
           {/* ── KPI Row ── */}
           {isSummaryError ? (
-            <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-xl p-6">
+            <div className="bg-zinc-900/50 border border-zinc-800/80 rounded-xl p-6 shadow-sm">
               <ChartErrorState message={(summaryError as any)?.response?.data?.message || summaryError?.message} />
             </div>
           ) : (
@@ -309,7 +311,7 @@ export default function ReportsPage() {
           )}
 
           {/* ── Spend Over Time ── */}
-          <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-xl p-4 sm:p-6">
+          <div className="bg-zinc-900/50 border border-zinc-800/80 rounded-xl p-4 sm:p-6 shadow-sm flex flex-col">
             <SectionHeader
               icon={<TrendUp size={15} color="currentColor" />}
               title="Spend over time"
@@ -401,7 +403,7 @@ export default function ReportsPage() {
           {/* ── Dept Spend + Turnaround ── */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-6">
             {/* Spend by dept */}
-            <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-xl p-4 sm:p-6">
+            <div className="bg-zinc-900/50 border border-zinc-800/80 rounded-xl p-4 sm:p-6 shadow-sm flex flex-col">
               <SectionHeader icon={<Building size={15} color="currentColor" />} title="Spend by department" sub="Approved value, all-time" />
               {isDeptError ? (
                 <ChartErrorState message={(deptError as any)?.response?.data?.message || deptError?.message} />
@@ -425,7 +427,7 @@ export default function ReportsPage() {
                           content={({ active, payload }) => {
                             if (!active || !payload?.length) return null;
                             return (
-                              <div className="bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-xs shadow-xl">
+                              <div className="bg-zinc-900 border border-zinc-800/80 rounded-lg px-3 py-2 text-xs shadow-xl">
                                 <p className="text-zinc-200">{payload[0].name}</p>
                                 <p className="text-zinc-400 font-mono">{fmtFull(payload[0].value as number)}</p>
                               </div>
@@ -456,9 +458,9 @@ export default function ReportsPage() {
             </div>
 
             {/* Approval turnaround (static — no endpoint yet) */}
-            <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-xl p-4 sm:p-6">
+            <div className="bg-zinc-900/50 border border-zinc-800/80 rounded-xl p-4 sm:p-6 shadow-sm flex flex-col">
               <SectionHeader icon={<Clock size={15} color="currentColor" />} title="Approval turnaround" sub="How quickly vouchers get resolved" />
-              <div className="h-40 -ml-2 sm:ml-0">
+              <div className="h-40 -ml-2 sm:ml-0 flex-1">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={APPROVAL_TURNAROUND} margin={{ top: 4, right: 4, left: -10, bottom: 0 }} barSize={20}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
@@ -481,7 +483,7 @@ export default function ReportsPage() {
           </div>
 
           {/* ── Voucher Type Breakdown ── */}
-          <div className="bg-zinc-900/60 border border-zinc-800/80 rounded-xl p-4 sm:p-6">
+          <div className="bg-zinc-900/50 border border-zinc-800/80 rounded-xl p-4 sm:p-6 shadow-sm flex flex-col">
             <SectionHeader
               icon={<Receipt21 size={15} color="currentColor" />}
               title="Volume by voucher type"
@@ -506,7 +508,7 @@ export default function ReportsPage() {
                         key={i}
                         className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 py-3 border-b border-zinc-800/40 last:border-0"
                       >
-                        <div className="flex items-center justify-between sm:contents">
+                        <div className="flex items-center justify-between sm:w-44 flex-shrink-0">
                           <span
                             className={`text-[10px] font-medium px-2 py-1 border rounded-md flex-shrink-0 ${
                               TYPE_COLORS[t.name] ?? "bg-zinc-800 text-zinc-400 border-zinc-700"
@@ -522,10 +524,10 @@ export default function ReportsPage() {
                             style={{ width: `${pct}%` }}
                           />
                         </div>
-                        <div className="flex items-center justify-between sm:contents">
-                          <span className="text-xs font-mono text-zinc-400 sm:w-16 text-right flex-shrink-0">{fmt(t.value)}</span>
-                          <span className="text-[11px] text-zinc-600 w-16 text-right flex-shrink-0 hidden sm:inline">
-                            {t.count} vouchers
+                        <div className="flex items-center justify-between sm:w-32 flex-shrink-0">
+                          <span className="text-xs font-mono text-zinc-300">{fmt(t.value)}</span>
+                          <span className="text-[11px] text-zinc-500 hidden sm:inline">
+                            {t.count} v.
                           </span>
                         </div>
                       </div>

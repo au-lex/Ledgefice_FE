@@ -97,20 +97,20 @@ export default function MandateSetupModal({ onClose }: { onClose: () => void }) 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm bg-black/60 transition-opacity">
-      <div className="relative bg-white bg-zinc-900 border border-gray-200 border-zinc-800 rounded-xl w-full max-w-md shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+      <div className="relative bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-md shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
 
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 border-zinc-800 bg-gray-50 bg-zinc-900 shrink-0">
-          <h2 className="text-sm font-medium text-gray-900 text-zinc-100">Set Up Auto-Renewal</h2>
-          <button onClick={onClose} className="text-gray-400 text-zinc-500 hover:text-gray-900 hover:text-zinc-100 transition-colors">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800 bg-zinc-900/50 shrink-0">
+          <h2 className="text-sm font-medium text-zinc-100">Set Up Auto-Renewal</h2>
+          <button onClick={onClose} className="text-zinc-500 hover:text-zinc-300 transition-colors">
             <CloseCircle size={20} color="currentColor" />
           </button>
         </div>
 
-        <div className="p-6 space-y-4 overflow-y-auto">
+        <div className="p-6 space-y-5 overflow-y-auto bg-zinc-950/30">
 
           {step === "form" && (
             <>
-              <p className="text-xs text-gray-600 text-zinc-400 leading-relaxed">
+              <p className="text-xs text-zinc-400 leading-relaxed">
                 Link a bank account for Direct Debit. You'll authenticate a small NIBSS token payment with your bank to activate it.
               </p>
 
@@ -122,7 +122,7 @@ export default function MandateSetupModal({ onClose }: { onClose: () => void }) 
                   value={bankCode}
                   onChange={(e) => setBankCode(e.target.value)}
                   disabled={banksLoading}
-                  className="w-full px-3 py-2 rounded-lg border border-gray-200 border-zinc-700 bg-white bg-zinc-800 text-sm text-gray-900 text-zinc-100"
+                  className="w-full px-3 py-2.5 rounded-lg border border-zinc-800 bg-zinc-950 text-sm text-zinc-200 outline-none focus:border-zinc-600 transition-colors font-medium appearance-none cursor-pointer"
                 >
                   <option value="">{banksLoading ? "Loading banks…" : "Select a bank"}</option>
                   {banks?.map((b) => (
@@ -142,7 +142,7 @@ export default function MandateSetupModal({ onClose }: { onClose: () => void }) 
                   value={accountNumber}
                   onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, ""))}
                   placeholder="0123456789"
-                  className="w-full px-3 py-2 rounded-lg border border-gray-200 border-zinc-700 bg-white bg-zinc-800 text-sm text-gray-900 text-zinc-100"
+                  className="w-full px-3 py-2.5 rounded-lg border border-zinc-800 bg-zinc-950 text-sm text-zinc-200 placeholder-zinc-600 outline-none focus:border-zinc-600 transition-colors font-medium"
                 />
               </div>
 
@@ -157,50 +157,52 @@ export default function MandateSetupModal({ onClose }: { onClose: () => void }) 
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ""))}
                   placeholder="08012345678"
-                  className="w-full px-3 py-2 rounded-lg border border-gray-200 border-zinc-700 bg-white bg-zinc-800 text-sm text-gray-900 text-zinc-100"
+                  className="w-full px-3 py-2.5 rounded-lg border border-zinc-800 bg-zinc-950 text-sm text-zinc-200 placeholder-zinc-600 outline-none focus:border-zinc-600 transition-colors font-medium"
                 />
-                <p className="text-[10px] text-gray-400 text-zinc-500 mt-1">
+                <p className="text-[10px] text-zinc-500 mt-1.5">
                   Required by your bank to authenticate the mandate.
                 </p>
               </div>
 
-              <button
-                onClick={handleLookup}
-                disabled={!canContinue || lookup.isPending}
-                className="w-full py-2.5 rounded-lg bg-gray-900 bg-zinc-100 text-white text-zinc-900 text-sm font-medium hover:bg-black hover:bg-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {lookup.isPending ? "Looking up account…" : "Continue"}
-              </button>
+              <div className="pt-2">
+                <button
+                  onClick={handleLookup}
+                  disabled={!canContinue || lookup.isPending}
+                  className="w-full py-2.5 rounded-lg bg-zinc-100 text-zinc-900 text-sm font-medium hover:bg-white transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
+                >
+                  {lookup.isPending ? "Looking up account…" : "Continue"}
+                </button>
+              </div>
             </>
           )}
 
           {step === "confirm" && (
             <>
-              <div className="p-4 bg-gray-50 bg-zinc-800/50 rounded-lg border border-gray-200 border-zinc-700">
+              <div className="p-4 bg-zinc-800/40 rounded-lg border border-zinc-700/50">
                 <p className="text-[11px] font-medium text-zinc-500 uppercase tracking-widest mb-1">
                   Confirm this is your account
                 </p>
-                <p className="text-sm font-semibold text-gray-900 text-zinc-100">{accountName}</p>
-                <p className="text-xs text-gray-500 text-zinc-400 mt-1">
+                <p className="text-sm font-semibold text-zinc-100">{accountName}</p>
+                <p className="text-xs text-zinc-400 mt-1">
                   {accountNumber} · {selectedBankName}
                 </p>
               </div>
 
-              <p className="text-xs text-gray-600 text-zinc-400 leading-relaxed">
+              <p className="text-xs text-zinc-400 leading-relaxed">
                 You'll receive a small token-payment request from your bank to authenticate this mandate — check your bank app after confirming.
               </p>
 
-              <div className="flex gap-3">
+              <div className="flex gap-3 pt-2">
                 <button
                   onClick={() => setStep("form")}
-                  className="flex-1 py-2.5 rounded-lg border border-gray-200 border-zinc-700 text-sm font-medium text-gray-700 text-zinc-300 hover:bg-gray-50 hover:bg-zinc-800 transition-all"
+                  className="flex-1 py-2.5 rounded-lg border border-zinc-700 text-sm font-medium text-zinc-300 hover:bg-zinc-800 transition-all"
                 >
                   Back
                 </button>
                 <button
                   onClick={handleCreate}
                   disabled={createMandate.isPending}
-                  className="flex-1 py-2.5 rounded-lg bg-gray-900 bg-zinc-100 text-white text-zinc-900 text-sm font-medium hover:bg-black hover:bg-white transition-all disabled:opacity-50"
+                  className="flex-1 py-2.5 rounded-lg bg-zinc-100 text-zinc-900 text-sm font-medium hover:bg-white transition-all disabled:opacity-40 shadow-sm"
                 >
                   {createMandate.isPending ? "Creating…" : "Confirm & Link"}
                 </button>
@@ -209,17 +211,17 @@ export default function MandateSetupModal({ onClose }: { onClose: () => void }) 
           )}
 
           {step === "done" && instructions && (
-            <div className="space-y-4">
+            <div className="space-y-5">
               <div className="text-center space-y-2">
-                <div className="w-10 h-10 mx-auto rounded-full bg-emerald-50 bg-emerald-500/10 border border-emerald-100 border-emerald-500/20 flex items-center justify-center text-emerald-500">
-                  <TickCircle size={18} color="currentColor" variant="Bulk" />
+                <div className="w-12 h-12 mx-auto rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-3">
+                  <TickCircle size={24} color="currentColor" variant="Bulk" />
                 </div>
-                <p className="text-sm font-medium text-gray-900 text-zinc-100">
+                <p className="text-sm font-medium text-zinc-100">
                   {instructions.amount
                     ? `Send ₦${instructions.amount} to authenticate`
                     : "Authentication Required"}
                 </p>
-                <p className="text-[11px] text-zinc-500 leading-relaxed px-2">
+                <p className="text-[11px] text-zinc-400 leading-relaxed px-2">
                   Send this exact amount from the account you just linked, using your bank's app or internet banking. Choose either option below.
                 </p>
               </div>
@@ -229,31 +231,31 @@ export default function MandateSetupModal({ onClose }: { onClose: () => void }) 
                   {instructions.accounts.map((acc, i) => (
                     <div
                       key={i}
-                      className="p-4 bg-gray-50 bg-zinc-800/50 rounded-lg border border-gray-200 border-zinc-700"
+                      className="p-4 bg-zinc-800/40 rounded-lg border border-zinc-700/50 hover:border-zinc-600 transition-colors"
                     >
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-1.5 text-[10px] font-medium text-zinc-500 uppercase tracking-widest">
-                          <BankIcon size={12} color="currentColor" />
+                          <BankIcon size={14} color="currentColor" />
                           {acc.bankName}
                         </div>
                         {instructions.accounts.length > 1 && (
-                          <span className="text-[9px] font-medium text-gray-400 text-zinc-600 uppercase tracking-widest">
+                          <span className="text-[9px] font-medium text-zinc-500 uppercase tracking-widest">
                             Option {i + 1}
                           </span>
                         )}
                       </div>
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-sm font-semibold text-gray-900 text-zinc-100 font-mono tracking-wide">
+                          <p className="text-sm font-semibold text-zinc-100 font-mono tracking-wide">
                             {acc.accountNumber}
                           </p>
-                          <p className="text-[11px] text-gray-500 text-zinc-400 mt-0.5">
+                          <p className="text-[11px] text-zinc-400 mt-0.5">
                             {acc.accountName}
                           </p>
                         </div>
                         <button
                           onClick={() => copyToClipboard(acc.accountNumber, "Account number")}
-                          className="p-2 text-gray-400 text-zinc-500 hover:text-gray-900 hover:text-zinc-100 hover:bg-gray-100 hover:bg-zinc-700 rounded-lg transition-colors shrink-0"
+                          className="p-2.5 text-zinc-500 hover:text-zinc-200 hover:bg-zinc-700 rounded-lg transition-colors shrink-0"
                           title="Copy account number"
                         >
                           <Copy size={16} color="currentColor" />
@@ -263,19 +265,21 @@ export default function MandateSetupModal({ onClose }: { onClose: () => void }) 
                   ))}
                 </div>
               ) : (
-                <div className="p-4 bg-gray-50 bg-zinc-800/50 rounded-lg border border-gray-200 border-zinc-700">
-                  <p className="text-xs text-gray-700 text-zinc-300 leading-relaxed whitespace-pre-wrap">
+                <div className="p-4 bg-zinc-800/40 rounded-lg border border-zinc-700/50">
+                  <p className="text-xs text-zinc-300 leading-relaxed whitespace-pre-wrap">
                     {instructions.raw}
                   </p>
                 </div>
               )}
 
-              <button
-                onClick={onClose}
-                className="w-full py-2.5 rounded-lg bg-gray-900 bg-zinc-100 text-white text-zinc-900 text-sm font-medium hover:bg-black hover:bg-white transition-all"
-              >
-                Done
-              </button>
+              <div className="pt-2">
+                <button
+                  onClick={onClose}
+                  className="w-full py-2.5 rounded-lg bg-zinc-100 text-zinc-900 text-sm font-medium hover:bg-white transition-all shadow-sm"
+                >
+                  Done
+                </button>
+              </div>
             </div>
           )}
 
