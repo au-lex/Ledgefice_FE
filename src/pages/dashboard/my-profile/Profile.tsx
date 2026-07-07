@@ -1,8 +1,51 @@
 import { useEffect, useRef, useState } from "react";
-import { User, Camera, Trash } from "iconsax-react";
+import { User, Camera, Trash, TickCircle, CloseCircle, ShieldTick } from "iconsax-react";
 import toast from "react-hot-toast";
 import Layout from "../../../layout/Layout";
 import { useMe, useUpdateMe } from "../../../api/hooks/useAuth";
+
+function formatPermissionLabel(key: string) {
+  return key
+    .replace(/^can_/, "")
+    .split("_")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
+
+const PERMISSION_CATEGORIES: { label: string; match: (key: string) => boolean }[] = [
+  { label: "Vouchers", match: (k) => k.includes("voucher") || k === "can_create" || k === "can_approve" || k === "can_dismiss_duplicates" },
+  { label: "Approval Chains", match: (k) => k.includes("approval_chain") },
+  { label: "Billing", match: (k) => k.includes("billing") },
+  { label: "Departments", match: (k) => k.includes("department") },
+  { label: "Reports & Audit", match: (k) => k.includes("report") || k.includes("audit") },
+  { label: "Administration", match: (k) => k.includes("manage_users") || k.includes("configure") },
+];
+
+function categorizePermissions(entries: [string, boolean][]) {
+  const groups = new Map<string, [string, boolean][]>();
+  const other: [string, boolean][] = [];
+
+  for (const entry of entries) {
+    const category = PERMISSION_CATEGORIES.find((c) => c.match(entry[0]));
+    if (category) {
+      if (!groups.has(category.label)) groups.set(category.label, []);
+      groups.get(category.label)!.push(entry);
+    } else {
+      other.push(entry);
+    }
+  }
+
+  if (other.length > 0) groups.set("General", other);
+
+  // Preserve category declaration order, General last
+  const ordered: [string, [string, boolean][]][] = [];
+  for (const cat of PERMISSION_CATEGORIES) {
+    if (groups.has(cat.label)) ordered.push([cat.label, groups.get(cat.label)!]);
+  }
+  if (groups.has("General")) ordered.push(["General", groups.get("General")!]);
+
+  return ordered;
+}
 
 function getInitials(name: string) {
   return name
@@ -98,6 +141,19 @@ export default function ProfilePage() {
 
   const avatarUrl = avatarPreview || user?.avatar_url;
   const deptName = user?.department?.name ?? "—";
+  const deptCode = user?.department?.code;
+  const orgName = user?.org?.name ?? "—";
+  const orgPlan = user?.org?.plan;
+  const orgPlanLabel =
+    typeof orgPlan === "string" && orgPlan.length > 0
+      ? orgPlan.charAt(0).toUpperCase() + orgPlan.slice(1)
+      : undefined;
+
+  const permissionEntries = Object.entries(user?.permissions ?? {}).filter(
+    (entry): entry is [string, boolean] => typeof entry[1] === "boolean",
+  );
+  const grantedCount = permissionEntries.filter(([, v]) => v).length;
+  const permissionGroups = categorizePermissions(permissionEntries);
 
   return (
     <Layout>
@@ -186,24 +242,36 @@ export default function ProfilePage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 dark:text-zinc-400 mb-1.5">Job Title</label>
+                  <label className="block text-xs font-medium text-gray-700 dark:text-zinc-400 mb-1.5">Department</label>
                   <input
                     type="text"
-                    value=""
-                    placeholder="—"
+                    value={deptCode ? `${deptName} (${deptCode})` : deptName}
                     disabled
                     className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-gray-500 dark:text-zinc-500 cursor-not-allowed"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 dark:text-zinc-400 mb-1.5">Department</label>
+                  <label className="block text-xs font-medium text-gray-700 dark:text-zinc-400 mb-1.5">Organization</label>
                   <input
                     type="text"
-                    value={deptName}
+                    value={orgPlanLabel ? `${orgName} — ${orgPlanLabel} plan` : orgName}
                     disabled
                     className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-gray-500 dark:text-zinc-500 cursor-not-allowed"
                   />
                 </div>
+
+
+              </div>
+
+              <div className=" flex justify-end">
+                <button
+                  type="button"
+                  onClick={handleSaveProfile}
+                  disabled={updateMe.isPending || isLoading}
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-medium hover:bg-black dark:hover:bg-white transition-all shadow-sm disabled:opacity-50"
+                >
+                  {updateMe.isPending ? "Saving..." : "Save Changes"}
+                </button>
               </div>
 
               {/* Change Password */}
@@ -239,19 +307,79 @@ export default function ProfilePage() {
                 >
                   {updateMe.isPending ? "Updating..." : "Update Password"}
                 </button>
+
+
+              </div>
+
+              {/* Permissions */}
+              <div className="pt-6 border-t border-gray-200 dark:border-zinc-800">
+                <div className="flex items-center justify-between mb-5">
+                  <div className="flex items-center gap-2">
+                    <ShieldTick size={16} color="currentColor" className="text-gray-500 dark:text-zinc-500" />
+                    <h3 className="text-sm font-semibold text-gray-900 dark:text-zinc-100">
+                      Your Permissions
+                    </h3>
+                  </div>
+                  <span className="text-[11px] font-medium text-gray-500 dark:text-zinc-500">
+                    {grantedCount} of {permissionEntries.length} enabled
+                  </span>
+                </div>
+
+                {permissionEntries.length === 0 ? (
+                  <p className="text-xs text-gray-500 dark:text-zinc-500">
+                    No permission data available.
+                  </p>
+                ) : (
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    {permissionGroups.map(([groupLabel, entries]) => (
+                      <div
+                        key={groupLabel}
+                        className="rounded-xl border border-gray-200 dark:border-zinc-800 bg-gray-50/60 dark:bg-zinc-900/40 overflow-hidden"
+                      >
+                        <div className="px-4 py-2.5 border-b border-gray-200 dark:border-zinc-800 bg-gray-100/60 dark:bg-zinc-900/80">
+                          <h4 className="text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-zinc-500">
+                            {groupLabel}
+                          </h4>
+                        </div>
+                        <div className="divide-y divide-gray-200 dark:divide-zinc-800">
+                          {entries.map(([key, granted]) => (
+                            <div
+                              key={key}
+                              className="flex items-center justify-between gap-3 px-4 py-2.5"
+                            >
+                              <span
+                                className={`text-xs ${granted
+                                    ? "text-gray-800 dark:text-zinc-200"
+                                    : "text-gray-400 dark:text-zinc-600"
+                                  }`}
+                              >
+                                {formatPermissionLabel(key)}
+                              </span>
+                              {granted ? (
+                                <span className="flex items-center gap-1 text-[10px] font-medium text-gray-500 dark:text-zinc-400">
+                                  <TickCircle size={13} color="currentColor" />
+                                  Enabled
+                                </span>
+                              ) : (
+                                <span className="flex items-center gap-1 text-[10px] font-medium text-gray-300 dark:text-zinc-700">
+                                  <CloseCircle size={13} color="currentColor" />
+                                  Off
+                                </span>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <p className="text-[10px] text-gray-500 dark:text-zinc-500 mt-4">
+                  Permissions are set by your administrator and can't be changed here.
+                </p>
               </div>
             </div>
 
-            <div className="p-4 border-t border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-900/80 flex justify-end">
-              <button
-                type="button"
-                onClick={handleSaveProfile}
-                disabled={updateMe.isPending || isLoading}
-                className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-medium hover:bg-black dark:hover:bg-white transition-all shadow-sm disabled:opacity-50"
-              >
-                {updateMe.isPending ? "Saving..." : "Save Changes"}
-              </button>
-            </div>
+
           </div>
         </div>
       </div>

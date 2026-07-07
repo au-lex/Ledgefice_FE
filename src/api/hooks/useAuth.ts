@@ -105,7 +105,6 @@ export interface MeUser {
   org: Org;
 }
 
-
 export interface UpdateMeResponse {
   id: string;
   name: string;
@@ -168,6 +167,12 @@ export function useLogin() {
         permissions: data.user.permissions,
         org: data.org,
       } satisfies MeUser);
+
+      // Force a background refetch so the real department object
+      // (name, code, icon_key) replaces the null placeholder quickly
+      // instead of waiting out the 5-minute staleTime.
+      queryClient.invalidateQueries({ queryKey: authKeys.me() });
+
       toast.success("Welcome back!");
     },
     onError: (error) => {
@@ -215,7 +220,6 @@ export function useUpdateMe() {
       return data.data;
     },
     onSuccess: (data) => {
-
       queryClient.setQueryData<MeUser | undefined>(authKeys.me(), (old) => {
         if (!old) return old;
         return {

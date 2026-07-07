@@ -57,6 +57,15 @@ export interface UpdateOrganizationPayload {
   logo?: File;
 }
 
+export interface ChangePasswordPayload {
+  current_password: string;
+  new_password: string;
+}
+
+export interface ChangePasswordResponse {
+  message: string;
+}
+
 // ── Helpers ────────────────────────────────────────────────────────────────
 
 const getErrorMessage = (
@@ -146,6 +155,25 @@ export function useUpdateOrganization() {
     },
     onError: (error) => {
       toast.error(getErrorMessage(error, "Failed to update organization"));
+    },
+  });
+}
+
+
+export function useChangePassword() {
+  return useMutation<ChangePasswordResponse, AxiosError<APIError>, ChangePasswordPayload>({
+    mutationFn: async (payload) => {
+      const { data } = await api.post<ChangePasswordResponse>(
+        "/organizations/change-password",
+        payload,
+      );
+      return data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || "Password updated successfully");
+    },
+    onError: (error) => {
+      toast.error(getErrorMessage(error, "Failed to change password"));
     },
   });
 }

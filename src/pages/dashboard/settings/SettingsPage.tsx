@@ -1,12 +1,17 @@
 import { useEffect, useRef, useState } from "react";
-import { Buildings, Camera, Trash } from "iconsax-react";
+import { Buildings, Camera, Trash, Lock } from "iconsax-react";
 import toast from "react-hot-toast";
 import Layout from "../../../layout/Layout";
-import { useOrganization, useUpdateOrganization } from "../../../api/hooks/useOnboarding";
+import {
+  useOrganization,
+  useUpdateOrganization,
+  useChangePassword,
+} from "../../../api/hooks/useOnboarding";
 
 export default function OrganisationSettingsPage() {
   const { data: org, isLoading } = useOrganization();
   const updateOrg = useUpdateOrganization();
+  const changePassword = useChangePassword();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -14,6 +19,10 @@ export default function OrganisationSettingsPage() {
   const [numberOfWorkers, setNumberOfWorkers] = useState("");
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
+
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   useEffect(() => {
     if (org) {
@@ -72,6 +81,36 @@ export default function OrganisationSettingsPage() {
     });
   };
 
+  const handleChangePassword = () => {
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      toast.error("All password fields are required");
+      return;
+    }
+    if (newPassword.length < 8) {
+      toast.error("New password must be at least 8 characters");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error("New password and confirmation do not match");
+      return;
+    }
+    if (newPassword === currentPassword) {
+      toast.error("New password must be different from current password");
+      return;
+    }
+
+    changePassword.mutate(
+      { current_password: currentPassword, new_password: newPassword },
+      {
+        onSuccess: () => {
+          setCurrentPassword("");
+          setNewPassword("");
+          setConfirmPassword("");
+        },
+      },
+    );
+  };
+
   const logoUrl = logoPreview || org?.logo_url;
   const initials = (org?.name || "")
     .trim()
@@ -101,7 +140,7 @@ export default function OrganisationSettingsPage() {
           </div>
         </div>
 
-        <div className="px-4 sm:px-6 py-6 sm:py-8 ">
+        <div className="px-4 sm:px-6 py-6 sm:py-8 space-y-6">
           <div className="bg-white dark:bg-zinc-900/40 border border-gray-200 dark:border-zinc-800/50 rounded-xl overflow-hidden shadow-sm">
 
             <div className="p-5 sm:p-8 border-b border-gray-200 dark:border-zinc-800/80 bg-gray-50 dark:bg-zinc-900">
@@ -205,6 +244,66 @@ export default function OrganisationSettingsPage() {
                 className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-medium hover:bg-black dark:hover:bg-white transition-all shadow-sm disabled:opacity-50"
               >
                 {updateOrg.isPending ? "Saving..." : "Save Changes"}
+              </button>
+            </div>
+          </div>
+
+          {/* Password Section */}
+          <div className="bg-white dark:bg-zinc-900/40 border border-gray-200 dark:border-zinc-800/50 rounded-xl overflow-hidden shadow-sm">
+            <div className="p-5 sm:p-8 border-b border-gray-200 dark:border-zinc-800/80 bg-gray-50 dark:bg-zinc-900 flex items-center gap-3">
+              <div className="p-2 bg-gray-100 dark:bg-zinc-900 rounded-lg border border-gray-200 dark:border-zinc-800/80 shadow-sm text-gray-600 dark:text-zinc-400">
+                <Lock size={16} color="currentColor" />
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-zinc-100">Password</h2>
+                <p className="text-xs text-gray-500 dark:text-zinc-500 mt-1">Update the password used to sign in.</p>
+              </div>
+            </div>
+
+            <div className="p-5 sm:p-8 space-y-5">
+              <div>
+                <label className="block text-xs font-medium text-gray-700 dark:text-zinc-400 mb-1.5">Current Password</label>
+                <input
+                  type="password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  autoComplete="current-password"
+                  className="w-full bg-white dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-gray-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:focus:ring-zinc-600 transition-all"
+                />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 dark:text-zinc-400 mb-1.5">New Password</label>
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    autoComplete="new-password"
+                    className="w-full bg-white dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-gray-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:focus:ring-zinc-600 transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-700 dark:text-zinc-400 mb-1.5">Confirm New Password</label>
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    autoComplete="new-password"
+                    className="w-full bg-white dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-gray-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:focus:ring-zinc-600 transition-all"
+                  />
+                </div>
+              </div>
+              <p className="text-[10px] text-gray-500 dark:text-zinc-500">Must be at least 8 characters.</p>
+            </div>
+
+            <div className="p-4 border-t border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-900/80 flex justify-end">
+              <button
+                type="button"
+                onClick={handleChangePassword}
+                disabled={changePassword.isPending}
+                className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-medium hover:bg-black dark:hover:bg-white transition-all shadow-sm disabled:opacity-50"
+              >
+                {changePassword.isPending ? "Updating..." : "Update Password"}
               </button>
             </div>
           </div>

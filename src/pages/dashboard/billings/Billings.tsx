@@ -24,6 +24,7 @@ import {
   type PlanOption,
 } from "../../../api/hooks/useSubscription";
 import MandateSetupModal from "./Mandate";
+import Loader from "../../../components/ui/Loader";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────
 
@@ -219,7 +220,7 @@ function PaymentMethodsSection() {
       </div>
 
       {isLoading && (
-        <div className="p-4 text-xs text-gray-500 dark:text-zinc-500">Loading…</div>
+<Loader />
       )}
 
       {!isLoading && tokenData?.has_token && (
@@ -247,7 +248,7 @@ function PaymentMethodsSection() {
       )}
 
       {!isLoading && !tokenData?.has_token && (
-        <div className="p-5 bg-white dark:bg-zinc-900/40 border border-dashed border-gray-300 dark:border-zinc-700 rounded-xl text-center">
+        <div className="p-5 bg-zinc-900/40 border border-dashed border-gray-300 dark:border-zinc-700 rounded-xl text-center">
           <p className="text-xs text-gray-600 dark:text-zinc-400 mb-3">
             No card saved — you'll need to pay manually each cycle unless you set up automatic renewal.
           </p>
@@ -279,9 +280,10 @@ export default function BillingPage() {
   if (planLoading || !planData) {
     return (
       <Layout>
-        <div className="min-h-screen b flex items-center justify-center text-sm text-gray-500 dark:text-zinc-500">
-          Loading billing details…
-        </div>
+        <section className="min-h-screen flex items-center justify-center bg-black">
+
+   <Loader />
+        </section>
       </Layout>
     );
   }

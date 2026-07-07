@@ -22,7 +22,7 @@ export default function Layout({ children }: DashboardLayoutProps) {
 
   if (isLoading || !me) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-black">
         <span className="w-5 h-5 border-2 border-gray-300 border-t-gray-800 rounded-full animate-spin" />
       </div>
     );

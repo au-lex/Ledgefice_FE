@@ -19,20 +19,21 @@ export default function LoginPage() {
 
   const login = useLogin();
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!email.trim() || !password.trim()) return;
+function handleSubmit(e: React.FormEvent) {
+  e.preventDefault();
+  if (!email.trim() || !password.trim()) return;
 
-    login.mutate(
-      { email, password },
-      {
-        onSuccess: () => {
-          // navigate to dashboard — swap for your router call
-          window.location.href = "/settings";
-        },
+  login.mutate(
+    { email, password },
+    {
+      onSuccess: (data) => {
+        const destination =
+          data.user.department === "Owner" ? "/voucher" : "/profile";
+        window.location.href = destination;
       },
-    );
-  }
+    },
+  );
+}
 
   return (
     <div className="min-h-screen w-full flex bg-gray-50 dark:bg-zinc-950 text-gray-900 dark:text-zinc-300 font-sans">
