@@ -1,8 +1,85 @@
-
-import {  User, Camera, Trash } from "iconsax-react";
+import { useEffect, useRef, useState } from "react";
+import { Buildings, Camera, Trash } from "iconsax-react";
+import toast from "react-hot-toast";
 import Layout from "../../../layout/Layout";
+import { useOrganization, useUpdateOrganization } from "../../../api/hooks/useOnboarding";
 
-export default function ProfilePage() {
+export default function OrganisationSettingsPage() {
+  const { data: org, isLoading } = useOrganization();
+  const updateOrg = useUpdateOrganization();
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [name, setName] = useState("");
+  const [numberOfWorkers, setNumberOfWorkers] = useState("");
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (org) {
+      setName(org.name);
+      setNumberOfWorkers(String(org.number_of_workers ?? ""));
+    }
+  }, [org?.name, org?.number_of_workers]);
+
+  const handlePickLogo = () => fileInputRef.current?.click();
+
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 1024 * 1024) {
+      toast.error("Image must be 1MB or smaller");
+      return;
+    }
+
+    setLogoFile(file);
+    setLogoPreview(URL.createObjectURL(file));
+  };
+
+  const handleClearLogoSelection = () => {
+    setLogoFile(null);
+    setLogoPreview(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const handleSave = () => {
+    const payload: { name?: string; number_of_workers?: number; logo?: File } = {};
+
+    if (name.trim() && name.trim() !== org?.name) payload.name = name.trim();
+
+    const parsedWorkers = Number(numberOfWorkers);
+    if (
+      numberOfWorkers.trim() !== "" &&
+      !Number.isNaN(parsedWorkers) &&
+      parsedWorkers !== org?.number_of_workers
+    ) {
+      payload.number_of_workers = parsedWorkers;
+    }
+
+    if (logoFile) payload.logo = logoFile;
+
+    if (!payload.name && payload.number_of_workers === undefined && !payload.logo) {
+      toast.error("No changes to save");
+      return;
+    }
+
+    updateOrg.mutate(payload, {
+      onSuccess: () => {
+        setLogoFile(null);
+        setLogoPreview(null);
+      },
+    });
+  };
+
+  const logoUrl = logoPreview || org?.logo_url;
+  const initials = (org?.name || "")
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase())
+    .join("");
+
   return (
     <Layout>
       <div className="min-h-screen bg-gray-50
@@ -15,10 +92,10 @@ export default function ProfilePage() {
           <div className="px-4 sm:px-6 h-16 flex items-center justify-between  mx-auto">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-gray-100 dark:bg-zinc-900 rounded-lg border border-gray-200 dark:border-zinc-800/80 shadow-sm text-gray-600 dark:text-zinc-400">
-                <User size={18} color="currentColor" />
+                <Buildings size={18} color="currentColor" />
               </div>
               <h1 className="text-sm font-medium text-gray-900 dark:text-zinc-100">
-                Profile Settings
+                Organisation Settings
               </h1>
             </div>
           </div>
@@ -28,89 +105,106 @@ export default function ProfilePage() {
           <div className="bg-white dark:bg-zinc-900/40 border border-gray-200 dark:border-zinc-800/50 rounded-xl overflow-hidden shadow-sm">
 
             <div className="p-5 sm:p-8 border-b border-gray-200 dark:border-zinc-800/80 bg-gray-50 dark:bg-zinc-900">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-zinc-100">My Profile</h2>
-              <p className="text-xs text-gray-500 dark:text-zinc-500 mt-1">Manage your personal information and password.</p>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-zinc-100">Organisation Profile</h2>
+              <p className="text-xs text-gray-500 dark:text-zinc-500 mt-1">Manage your organisation's information.</p>
             </div>
 
             <div className="p-5 sm:p-8 space-y-8">
 
-              {/* Avatar Section */}
+              {/* Logo Section */}
               <div className="flex items-center gap-4 sm:gap-6">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gray-100 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 flex items-center justify-center text-xl sm:text-2xl font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest shadow-inner flex-shrink-0">
-                  EI
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="hidden"
+                  onChange={handleLogoChange}
+                />
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-gray-100 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 flex items-center justify-center text-xl sm:text-2xl font-bold text-gray-400 dark:text-zinc-500 uppercase tracking-widest shadow-inner flex-shrink-0 overflow-hidden">
+                  {logoUrl ? (
+                    <img src={logoUrl} alt={org?.name || "Logo"} className="w-full h-full object-cover" />
+                  ) : (
+                    initials
+                  )}
                 </div>
                 <div className="space-y-2">
                   <div className="flex flex-wrap gap-2">
-                    <button className="px-3 sm:px-4 py-2 bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-medium rounded-lg hover:bg-black dark:hover:bg-white transition-colors flex items-center gap-2 shadow-sm">
-                      <Camera size={14} color="currentColor" /> <span className="hidden xs:inline">Change Picture</span><span className="xs:hidden">Change</span>
+                    <button
+                      type="button"
+                      onClick={handlePickLogo}
+                      className="px-3 sm:px-4 py-2 bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-medium rounded-lg hover:bg-black dark:hover:bg-white transition-colors flex items-center gap-2 shadow-sm"
+                    >
+                      <Camera size={14} color="currentColor" /> <span className="hidden xs:inline">Change Logo</span><span className="xs:hidden">Change</span>
                     </button>
-                    <button className="px-3 py-2 border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-red-600 dark:text-red-400 text-xs font-medium rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors">
-                      <Trash size={14} color="currentColor" />
-                    </button>
+                    {logoPreview && (
+                      <button
+                        type="button"
+                        onClick={handleClearLogoSelection}
+                        className="px-3 py-2 border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-red-600 dark:text-red-400 text-xs font-medium rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors"
+                      >
+                        <Trash size={14} color="currentColor" />
+                      </button>
+                    )}
                   </div>
-                  <p className="text-[10px] text-gray-500 dark:text-zinc-500">JPG, GIF or PNG. 1MB max.</p>
+                  <p className="text-[10px] text-gray-500 dark:text-zinc-500">JPG, PNG or WEBP. 1MB max.</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 dark:text-zinc-400 mb-1.5">Full Name</label>
+                  <label className="block text-xs font-medium text-gray-700 dark:text-zinc-400 mb-1.5">Organisation Name</label>
                   <input
                     type="text"
-                    defaultValue="Emeka Ibe"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                     className="w-full bg-white dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-gray-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:focus:ring-zinc-600 transition-all font-medium"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 dark:text-zinc-400 mb-1.5">Email Address</label>
+                  <label className="block text-xs font-medium text-gray-700 dark:text-zinc-400 mb-1.5">Number of Workers</label>
                   <input
-                    type="email"
-                    defaultValue="e.ibe@company.com"
+                    type="number"
+                    min={0}
+                    value={numberOfWorkers}
+                    onChange={(e) => setNumberOfWorkers(e.target.value)}
                     className="w-full bg-white dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-gray-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:focus:ring-zinc-600 transition-all"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 dark:text-zinc-400 mb-1.5">Job Title</label>
+                  <label className="block text-xs font-medium text-gray-700 dark:text-zinc-400 mb-1.5">Plan</label>
                   <input
                     type="text"
-                    defaultValue="Finance Director"
+                    value={org?.plan ? org.plan.charAt(0).toUpperCase() + org.plan.slice(1) : ""}
                     disabled
                     className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-gray-500 dark:text-zinc-500 cursor-not-allowed"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-700 dark:text-zinc-400 mb-1.5">Department</label>
+                  <label className="block text-xs font-medium text-gray-700 dark:text-zinc-400 mb-1.5">Max Departments / Users</label>
                   <input
                     type="text"
-                    defaultValue="Finance"
+                    value={
+                      org
+                        ? `${org.limits.max_departments === -1 ? "Unlimited" : org.limits.max_departments} / ${
+                            org.limits.max_users === -1 ? "Unlimited" : org.limits.max_users
+                          }`
+                        : ""
+                    }
                     disabled
                     className="w-full bg-gray-50 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-gray-500 dark:text-zinc-500 cursor-not-allowed"
                   />
                 </div>
               </div>
-
-              {/* Change Password */}
-              <div className="pt-6 border-t border-gray-200 dark:border-zinc-800">
-                <h3 className="text-sm font-semibold text-gray-900 dark:text-zinc-100 mb-4">Change Password</h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 max-w-2xl">
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 dark:text-zinc-400 mb-1.5">Current Password</label>
-                    <input type="password" placeholder="••••••••" className="w-full bg-white dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-gray-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:focus:ring-zinc-600 transition-all" />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-medium text-gray-700 dark:text-zinc-400 mb-1.5">New Password</label>
-                    <input type="password" placeholder="••••••••" className="w-full bg-white dark:bg-zinc-950 border border-gray-200 dark:border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-gray-900 dark:text-zinc-100 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:focus:ring-zinc-600 transition-all" />
-                  </div>
-                </div>
-                <button className="mt-4 px-4 py-2 rounded-lg bg-gray-100 dark:bg-zinc-800 text-gray-900 dark:text-zinc-100 text-xs font-medium hover:bg-gray-200 dark:hover:bg-zinc-700 transition-all border border-gray-200 dark:border-zinc-700">
-                  Update Password
-                </button>
-              </div>
             </div>
 
             <div className="p-4 border-t border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-900/80 flex justify-end">
-              <button className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-medium hover:bg-black dark:hover:bg-white transition-all shadow-sm">
-                Save Changes
+              <button
+                type="button"
+                onClick={handleSave}
+                disabled={updateOrg.isPending || isLoading}
+                className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-medium hover:bg-black dark:hover:bg-white transition-all shadow-sm disabled:opacity-50"
+              >
+                {updateOrg.isPending ? "Saving..." : "Save Changes"}
               </button>
             </div>
           </div>

@@ -1,67 +1,70 @@
-import  { useState } from "react";
+import { useState } from "react";
 import {
   EmptyWallet,
   Receipt21,
   DocumentDownload,
   TickCircle,
   Warning2,
-  Edit2,
   CloseCircle,
   Add,
   ArrowRight2,
-
   Flash,
   Buildings2,
-  Calendar
+  Calendar,
+  Trash,
 } from "iconsax-react";
 import Layout from "../../../layout/Layout";
+import {
+  useMyPlan,
+  useMyHistory,
+  useUpgradePlan,
+  useMyToken,
+  useDeleteMyToken,
+  type PlanType,
+  type PlanOption,
+} from "../../../api/hooks/useSubscription";
+import MandateSetupModal from "./Mandate";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-interface Invoice {
-  id: string;
-  date: string;
-  amount: number;
-  status: "paid" | "failed" | "pending";
-  plan: string;
-  invoiceNumber: string;
-}
-
-interface PaymentMethod {
-  id: string;
-  brand: "Visa" | "Mastercard";
-  last4: string;
-  expiry: string;
-  isDefault: boolean;
-}
-
-// ─── Mock Data ────────────────────────────────────────────────────────────────
-
-const MOCK_INVOICES: Invoice[] = [
-  { id: "inv-1", date: "2026-06-25", amount: 250000, status: "paid", plan: "Enterprise OS", invoiceNumber: "INV-2026-06-01" },
-  { id: "inv-2", date: "2026-05-25", amount: 250000, status: "paid", plan: "Enterprise OS", invoiceNumber: "INV-2026-05-01" },
-  { id: "inv-3", date: "2026-04-25", amount: 250000, status: "paid", plan: "Enterprise OS", invoiceNumber: "INV-2026-04-01" },
-  { id: "inv-4", date: "2026-03-25", amount: 150000, status: "paid", plan: "Pro OS", invoiceNumber: "INV-2026-03-01" },
-];
-
-const MOCK_PAYMENT_METHODS: PaymentMethod[] = [
-  { id: "pm-1", brand: "Visa", last4: "4242", expiry: "12/28", isDefault: true },
-];
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
+// ─── Helpers ──────────────────────────────────────────────────────────────
 
 function formatAmount(n: number) {
   return "₦" + n.toLocaleString("en-NG");
 }
 
-function formatDate(d: string) {
+function formatDate(d: string | null) {
+  if (!d) return "—";
   return new Date(d).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 }
 
-// ─── Modals ───────────────────────────────────────────────────────────────────
+function planDisplayName(cfg: PlanOption["config"]) {
+  return cfg.name + " OS";
+}
 
-function UpgradeModal({ onClose }: { onClose: () => void }) {
-  const [selectedPlan, setSelectedPlan] = useState<string>("enterprise");
+// ─── Modals ───────────────────────────────────────────────────────────────
+
+function UpgradeModal({
+  plans,
+  currentPlan,
+  onClose,
+}: {
+  plans: PlanOption[];
+  currentPlan: PlanType;
+  onClose: () => void;
+}) {
+  const [selectedPlan, setSelectedPlan] = useState<PlanType>(currentPlan);
+  const upgrade = useUpgradePlan();
+
+  const handleConfirm = () => {
+    if (selectedPlan === currentPlan) return;
+    upgrade.mutate(
+      { plan: selectedPlan, billing_cycle: "monthly" },
+      {
+        onSuccess: (res) => {
+          window.location.href = res.checkout_link;
+        },
+      },
+    );
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm bg-black/60 transition-opacity">
@@ -79,67 +82,76 @@ function UpgradeModal({ onClose }: { onClose: () => void }) {
 
         <div className="p-6 overflow-y-auto bg-gray-50/50 dark:bg-zinc-950/30 flex-1 custom-scrollbar">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {plans.map((p) => {
+              const isCurrent = p.plan === currentPlan;
+              const isSelected = selectedPlan === p.plan;
+              const priceLabel =
+                p.config.monthly_price === 0
+                  ? "Custom"
+                  : formatAmount(p.config.monthly_price / 100);
 
-            {/* Starter Plan */}
-            <div className={`relative flex flex-col rounded-xl border p-5 transition-all cursor-pointer ${selectedPlan === 'starter' ? 'bg-white dark:bg-zinc-900 border-gray-900 dark:border-zinc-400 shadow-md ring-1 ring-gray-900 dark:ring-zinc-400' : 'bg-gray-50 dark:bg-pri border-gray-200 dark:border-zinc-800 hover:border-gray-300 dark:hover:border-zinc-700'}`} onClick={() => setSelectedPlan('starter')}>
-              <div className="mb-4">
-                <p className="text-sm font-semibold text-gray-900 dark:text-zinc-100 mb-1">Starter OS</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-zinc-50 tracking-tight">₦50,000<span className="text-xs font-normal text-gray-500 dark:text-zinc-500">/mo</span></p>
-              </div>
-              <p className="text-xs text-gray-600 dark:text-zinc-400 mb-6">Essential tools for small teams managing basic expenses.</p>
-              <ul className="space-y-3 flex-1 mb-6">
-                {['Up to 5 Users', 'Basic Approval Chains', 'Standard Support', '500 Vouchers/mo'].map((feat, i) => (
-                  <li key={i} className="flex items-center gap-2 text-xs text-gray-700 dark:text-zinc-300 font-medium">
-                    <TickCircle size={14} className="text-gray-400 dark:text-zinc-500" color="currentColor" variant="Bulk" /> {feat}
-                  </li>
-                ))}
-              </ul>
-              <div className="w-full text-center py-2 rounded-lg border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-xs font-medium text-gray-700 dark:text-zinc-300">
-                {selectedPlan === 'starter' ? 'Selected' : 'Select Starter'}
-              </div>
-            </div>
-
-            {/* Pro Plan */}
-            <div className={`relative flex flex-col rounded-xl border p-5 transition-all cursor-pointer ${selectedPlan === 'pro' ? 'bg-white dark:bg-zinc-900 border-gray-900 dark:border-zinc-400 shadow-md ring-1 ring-gray-900 dark:ring-zinc-400' : 'bg-gray-50 dark:bg-pri border-gray-200 dark:border-zinc-800 hover:border-gray-300 dark:hover:border-zinc-700'}`} onClick={() => setSelectedPlan('pro')}>
-              <div className="mb-4">
-                <p className="text-sm font-semibold text-gray-900 dark:text-zinc-100 mb-1">Pro OS</p>
-                <p className="text-2xl font-bold text-gray-900 dark:text-zinc-50 tracking-tight">₦150,000<span className="text-xs font-normal text-gray-500 dark:text-zinc-500">/mo</span></p>
-              </div>
-              <p className="text-xs text-gray-600 dark:text-zinc-400 mb-6">Advanced controls for growing operations and multiple sites.</p>
-              <ul className="space-y-3 flex-1 mb-6">
-                {['Up to 20 Users', 'Multi-tier Approvals', 'Priority Support', 'Unlimited Vouchers', 'Audit Logging'].map((feat, i) => (
-                  <li key={i} className="flex items-center gap-2 text-xs text-gray-700 dark:text-zinc-300 font-medium">
-                    <TickCircle size={14} className="text-gray-400 dark:text-zinc-500" color="currentColor" variant="Bulk" /> {feat}
-                  </li>
-                ))}
-              </ul>
-              <div className="w-full text-center py-2 rounded-lg border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-xs font-medium text-gray-700 dark:text-zinc-300">
-                {selectedPlan === 'pro' ? 'Selected' : 'Select Pro'}
-              </div>
-            </div>
-
-            {/* Enterprise Plan (Current) */}
-            <div className={`relative flex flex-col rounded-xl border p-5 transition-all cursor-pointer ${selectedPlan === 'enterprise' ? 'bg-gray-900 dark:bg-zinc-100 border-gray-900 dark:border-zinc-100 shadow-lg' : 'bg-gray-50 dark:bg-pri border-gray-200 dark:border-zinc-800 hover:border-gray-300 dark:hover:border-zinc-700'}`} onClick={() => setSelectedPlan('enterprise')}>
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-[9px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border border-gray-800 dark:border-zinc-200">
-                Current Plan
-              </div>
-              <div className="mb-4 mt-2">
-                <p className={`text-sm font-semibold mb-1 ${selectedPlan === 'enterprise' ? 'text-white dark:text-zinc-900' : 'text-gray-900 dark:text-zinc-100'}`}>Enterprise OS</p>
-                <p className={`text-2xl font-bold tracking-tight ${selectedPlan === 'enterprise' ? 'text-white dark:text-zinc-900' : 'text-gray-900 dark:text-zinc-50'}`}>₦250,000<span className={`text-xs font-normal ${selectedPlan === 'enterprise' ? 'text-gray-400 dark:text-zinc-600' : 'text-gray-500 dark:text-zinc-500'}`}>/mo</span></p>
-              </div>
-              <p className={`text-xs mb-6 ${selectedPlan === 'enterprise' ? 'text-gray-300 dark:text-zinc-700' : 'text-gray-600 dark:text-zinc-400'}`}>Maximum security and unlimited scale for conglomerates.</p>
-              <ul className="space-y-3 flex-1 mb-6">
-                {['Unlimited Users', 'Custom Workflows', '24/7 Dedicated Support', 'API Access', 'Custom Roles & RBAC'].map((feat, i) => (
-                  <li key={i} className={`flex items-center gap-2 text-xs font-medium ${selectedPlan === 'enterprise' ? 'text-gray-200 dark:text-zinc-800' : 'text-gray-700 dark:text-zinc-300'}`}>
-                    <TickCircle size={14} className={selectedPlan === 'enterprise' ? 'text-gray-400 dark:text-zinc-600' : 'text-gray-400 dark:text-zinc-500'} color="currentColor" variant="Bulk" /> {feat}
-                  </li>
-                ))}
-              </ul>
-              <div className={`w-full text-center py-2 rounded-lg text-xs font-medium ${selectedPlan === 'enterprise' ? 'bg-white dark:bg-zinc-900 text-gray-900 dark:text-zinc-100' : 'border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-700 dark:text-zinc-300'}`}>
-                {selectedPlan === 'enterprise' ? 'Current Plan' : 'Select Enterprise'}
-              </div>
-            </div>
-
+              return (
+                <div
+                  key={p.plan}
+                  className={`relative flex flex-col rounded-xl border p-5 transition-all cursor-pointer ${
+                    isSelected
+                      ? "bg-white dark:bg-zinc-900 border-gray-900 dark:border-zinc-400 shadow-md ring-1 ring-gray-900 dark:ring-zinc-400"
+                      : "bg-gray-50 dark:bg-pri border-gray-200 dark:border-zinc-800 hover:border-gray-300 dark:hover:border-zinc-700"
+                  }`}
+                  onClick={() => setSelectedPlan(p.plan)}
+                >
+                  {isCurrent && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-[9px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border border-gray-800 dark:border-zinc-200">
+                      Current Plan
+                    </div>
+                  )}
+                  <div className="mb-4 mt-2">
+                    <p className="text-sm font-semibold text-gray-900 dark:text-zinc-100 mb-1">
+                      {planDisplayName(p.config)}
+                    </p>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-zinc-50 tracking-tight">
+                      {priceLabel}
+                      {p.config.monthly_price > 0 && (
+                        <span className="text-xs font-normal text-gray-500 dark:text-zinc-500">/mo</span>
+                      )}
+                    </p>
+                  </div>
+                  <ul className="space-y-3 flex-1 mb-6">
+                    <li className="flex items-center gap-2 text-xs text-gray-700 dark:text-zinc-300 font-medium">
+                      <TickCircle size={14} className="text-gray-400 dark:text-zinc-500" color="currentColor" variant="Bulk" />
+                      {p.config.max_users === -1 ? "Unlimited Users" : `Up to ${p.config.max_users} Users`}
+                    </li>
+                    <li className="flex items-center gap-2 text-xs text-gray-700 dark:text-zinc-300 font-medium">
+                      <TickCircle size={14} className="text-gray-400 dark:text-zinc-500" color="currentColor" variant="Bulk" />
+                      {p.config.max_departments === -1 ? "Unlimited Departments" : `Up to ${p.config.max_departments} Departments`}
+                    </li>
+                    {p.config.features.multi_step_approvals && (
+                      <li className="flex items-center gap-2 text-xs text-gray-700 dark:text-zinc-300 font-medium">
+                        <TickCircle size={14} className="text-gray-400 dark:text-zinc-500" color="currentColor" variant="Bulk" /> Multi-step Approvals
+                      </li>
+                    )}
+                    {p.config.features.full_reporting_dashboard && (
+                      <li className="flex items-center gap-2 text-xs text-gray-700 dark:text-zinc-300 font-medium">
+                        <TickCircle size={14} className="text-gray-400 dark:text-zinc-500" color="currentColor" variant="Bulk" /> Full Reporting Dashboard
+                      </li>
+                    )}
+                    {p.config.features.audit_log_export && (
+                      <li className="flex items-center gap-2 text-xs text-gray-700 dark:text-zinc-300 font-medium">
+                        <TickCircle size={14} className="text-gray-400 dark:text-zinc-500" color="currentColor" variant="Bulk" /> Audit Log Export
+                      </li>
+                    )}
+                    {p.config.features.priority_support && (
+                      <li className="flex items-center gap-2 text-xs text-gray-700 dark:text-zinc-300 font-medium">
+                        <TickCircle size={14} className="text-gray-400 dark:text-zinc-500" color="currentColor" variant="Bulk" /> Priority Support
+                      </li>
+                    )}
+                  </ul>
+                  <div className="w-full text-center py-2 rounded-lg border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-xs font-medium text-gray-700 dark:text-zinc-300">
+                    {isCurrent ? "Current Plan" : isSelected ? "Selected" : `Select ${p.config.name}`}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -148,11 +160,11 @@ function UpgradeModal({ onClose }: { onClose: () => void }) {
             Cancel
           </button>
           <button
-            disabled={selectedPlan === 'enterprise'}
-            onClick={onClose}
+            disabled={selectedPlan === currentPlan || upgrade.isPending}
+            onClick={handleConfirm}
             className="px-5 py-2 rounded-lg bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-sm font-medium hover:bg-black dark:hover:bg-white transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Confirm Change
+            {upgrade.isPending ? "Redirecting..." : "Confirm Change"}
           </button>
         </div>
       </div>
@@ -161,6 +173,8 @@ function UpgradeModal({ onClose }: { onClose: () => void }) {
 }
 
 function CancelModal({ onClose }: { onClose: () => void }) {
+  // No cancel-subscription endpoint exists on the backend yet — this stays
+  // UI-only until SubscriptionHandler gets a Cancel method + route.
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm bg-black/60 transition-opacity">
       <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-xl w-full max-w-md shadow-2xl overflow-hidden">
@@ -171,7 +185,7 @@ function CancelModal({ onClose }: { onClose: () => void }) {
           <div>
             <h2 className="text-sm font-semibold text-gray-900 dark:text-zinc-100">Cancel Subscription?</h2>
             <p className="text-xs text-gray-600 dark:text-zinc-400 mt-1.5 leading-relaxed">
-              If you cancel, you will lose access to all premium features at the end of your current billing cycle (July 25, 2026). Your data will be preserved in a read-only state for 90 days.
+              If you cancel, you will lose access to all premium features at the end of your current billing cycle. Your data will be preserved in a read-only state for 90 days.
             </p>
           </div>
         </div>
@@ -191,11 +205,89 @@ function CancelModal({ onClose }: { onClose: () => void }) {
   );
 }
 
-// ─── Main Page ────────────────────────────────────────────────────────────────
+// ─── Payment Methods ────────────────────────────────────────────────────────
+
+function PaymentMethodsSection() {
+  const { data: tokenData, isLoading } = useMyToken();
+  const deleteToken = useDeleteMyToken();
+  const [showMandateModal, setShowMandateModal] = useState(false);
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-sm font-semibold text-gray-900 dark:text-zinc-100">Payment Methods</h3>
+      </div>
+
+      {isLoading && (
+        <div className="p-4 text-xs text-gray-500 dark:text-zinc-500">Loading…</div>
+      )}
+
+      {!isLoading && tokenData?.has_token && (
+        <div className="space-y-3">
+          <div className="flex items-center justify-between p-4 bg-white dark:bg-zinc-900/40 border border-gray-200 dark:border-zinc-800/50 rounded-xl shadow-sm hover:border-gray-300 dark:hover:border-zinc-700 transition-colors">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-8 bg-gray-100 dark:bg-zinc-800 rounded border border-gray-200 dark:border-zinc-700 flex items-center justify-center text-[10px] font-bold text-gray-500 dark:text-zinc-400 tracking-wider">
+                {tokenData.card_type}
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-900 dark:text-zinc-200">{tokenData.card_pan}</p>
+                <p className="text-[11px] text-gray-500 dark:text-zinc-500 mt-0.5">Saved for automatic renewal</p>
+              </div>
+            </div>
+            <button
+              onClick={() => deleteToken.mutate()}
+              disabled={deleteToken.isPending}
+              className="p-2 text-gray-400 dark:text-zinc-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-lg transition-colors disabled:opacity-50"
+              title="Remove card"
+            >
+              <Trash size={16} color="currentColor" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {!isLoading && !tokenData?.has_token && (
+        <div className="p-5 bg-white dark:bg-zinc-900/40 border border-dashed border-gray-300 dark:border-zinc-700 rounded-xl text-center">
+          <p className="text-xs text-gray-600 dark:text-zinc-400 mb-3">
+            No card saved — you'll need to pay manually each cycle unless you set up automatic renewal.
+          </p>
+          <button
+            onClick={() => setShowMandateModal(true)}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-gray-900 dark:bg-zinc-100 text-white dark:text-zinc-900 text-xs font-medium hover:bg-black dark:hover:bg-white transition-all"
+          >
+            <Add size={14} color="currentColor" /> Set Up Auto-Renewal
+          </button>
+        </div>
+      )}
+
+      {showMandateModal && (
+        <MandateSetupModal onClose={() => setShowMandateModal(false)} />
+      )}
+    </div>
+  );
+}
+
+// ─── Main Page ────────────────────────────────────────────────────────────
 
 export default function BillingPage() {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
+
+  const { data: planData, isLoading: planLoading } = useMyPlan();
+  const { data: historyData, isLoading: historyLoading } = useMyHistory({ page: 1, limit: 5 });
+
+  if (planLoading || !planData) {
+    return (
+      <Layout>
+        <div className="min-h-screen b flex items-center justify-center text-sm text-gray-500 dark:text-zinc-500">
+          Loading billing details…
+        </div>
+      </Layout>
+    );
+  }
+
+  const currentPlanOption = planData.plans.find((p) => p.plan === planData.current_plan);
+  const sub = planData.subscription;
 
   return (
     <Layout>
@@ -232,15 +324,20 @@ export default function BillingPage() {
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6 mb-8">
                     <div>
                       <div className="flex items-center gap-3 mb-2">
-                        <h2 className="text-2xl font-bold text-gray-900 dark:text-zinc-100 tracking-tight">Enterprise OS</h2>
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-zinc-100 tracking-tight">
+                          {currentPlanOption ? planDisplayName(currentPlanOption.config) : planData.current_plan}
+                        </h2>
                         <span className="inline-flex items-center px-2 py-0.5 rounded-md border border-gray-200 dark:border-zinc-700/50 bg-gray-100 dark:bg-zinc-800 text-[10px] font-medium text-gray-700 dark:text-zinc-300 uppercase tracking-widest">
-                          Active
+                          {sub?.status ? sub.status : "Active"}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-600 dark:text-zinc-400">Unlimited scale and custom workflows for conglomerates.</p>
                     </div>
                     <div className="text-left sm:text-right">
-                      <p className="text-3xl font-bold text-gray-900 dark:text-zinc-50 tracking-tight mb-1">₦250,000</p>
+                      <p className="text-3xl font-bold text-gray-900 dark:text-zinc-50 tracking-tight mb-1">
+                        {currentPlanOption && currentPlanOption.config.monthly_price > 0
+                          ? formatAmount(currentPlanOption.config.monthly_price / 100)
+                          : "Custom"}
+                      </p>
                       <p className="text-xs font-medium text-gray-500 dark:text-zinc-500">per month</p>
                     </div>
                   </div>
@@ -250,14 +347,20 @@ export default function BillingPage() {
                       <p className="text-[10px] font-medium text-gray-500 dark:text-zinc-500 uppercase tracking-widest mb-1.5">Next Billing Date</p>
                       <div className="flex items-center gap-2">
                         <Calendar size={14} className="text-gray-400 dark:text-zinc-400" color="currentColor" />
-                        <p className="text-sm font-semibold text-gray-900 dark:text-zinc-200">July 25, 2026</p>
+                        <p className="text-sm font-semibold text-gray-900 dark:text-zinc-200">
+                          {formatDate(sub?.renews_at ?? null)}
+                        </p>
                       </div>
                     </div>
                     <div>
                       <p className="text-[10px] font-medium text-gray-500 dark:text-zinc-500 uppercase tracking-widest mb-1.5">Seat Usage</p>
                       <div className="flex items-center gap-2">
                         <Buildings2 size={14} className="text-gray-400 dark:text-zinc-400" color="currentColor" />
-                        <p className="text-sm font-semibold text-gray-900 dark:text-zinc-200">Unlimited Personnel</p>
+                        <p className="text-sm font-semibold text-gray-900 dark:text-zinc-200">
+                          {currentPlanOption?.config.max_users === -1
+                            ? "Unlimited Personnel"
+                            : `Up to ${currentPlanOption?.config.max_users ?? "—"} Users`}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -280,40 +383,7 @@ export default function BillingPage() {
               </div>
 
               {/* Payment Methods */}
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-semibold text-gray-900 dark:text-zinc-100">Payment Methods</h3>
-                  <button className="text-[11px] font-medium text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 transition-colors flex items-center gap-1">
-                    <Add size={14} color="currentColor" /> Add Method
-                  </button>
-                </div>
-
-                <div className="space-y-3">
-                  {MOCK_PAYMENT_METHODS.map((pm) => (
-                    <div key={pm.id} className="flex items-center justify-between p-4 bg-white dark:bg-zinc-900/40 border border-gray-200 dark:border-zinc-800/50 rounded-xl shadow-sm hover:border-gray-300 dark:hover:border-zinc-700 transition-colors">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-8 bg-gray-100 dark:bg-zinc-800 rounded border border-gray-200 dark:border-zinc-700 flex items-center justify-center text-[10px] font-bold text-gray-500 dark:text-zinc-400 tracking-wider">
-                          VISA
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <p className="text-sm font-medium text-gray-900 dark:text-zinc-200">•••• {pm.last4}</p>
-                            {pm.isDefault && (
-                              <span className="bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-zinc-400 text-[9px] px-1.5 py-0.5 rounded font-medium border border-gray-200 dark:border-zinc-700">Default</span>
-                            )}
-                          </div>
-                          <p className="text-[11px] text-gray-500 dark:text-zinc-500 mt-0.5">Expires {pm.expiry}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button className="p-2 text-gray-400 dark:text-zinc-500 hover:text-gray-900 dark:hover:text-zinc-200 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-lg transition-colors">
-                          <Edit2 size={16} color="currentColor" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <PaymentMethodsSection />
 
             </div>
 
@@ -326,45 +396,60 @@ export default function BillingPage() {
                 </h3>
               </div>
               <div className="divide-y divide-gray-100 dark:divide-zinc-800/80">
-                {MOCK_INVOICES.map((inv) => (
-                  <div key={inv.id} className="p-4 hover:bg-gray-50 dark:hover:bg-zinc-800/30 transition-colors flex items-center justify-between group cursor-pointer">
+                {historyLoading && (
+                  <div className="p-4 text-xs text-gray-500 dark:text-zinc-500">Loading…</div>
+                )}
+                {!historyLoading && historyData?.history.length === 0 && (
+                  <div className="p-4 text-xs text-gray-500 dark:text-zinc-500">No billing history yet.</div>
+                )}
+                {historyData?.history.map((item) => (
+                  <div key={item.id} className="p-4 hover:bg-gray-50 dark:hover:bg-zinc-800/30 transition-colors flex items-center justify-between group cursor-pointer">
                     <div>
-                      <p className="text-xs font-semibold text-gray-900 dark:text-zinc-200 mb-1">{formatAmount(inv.amount)}</p>
+                      <p className="text-xs font-semibold text-gray-900 dark:text-zinc-200 mb-1">{formatAmount(item.amount)}</p>
                       <div className="flex items-center gap-2 text-[10px]">
-                        <span className="text-gray-500 dark:text-zinc-400">{formatDate(inv.date)}</span>
+                        <span className="text-gray-500 dark:text-zinc-400">{formatDate(item.paid_at ?? item.created_at)}</span>
                         <span className="text-gray-300 dark:text-zinc-700">•</span>
-                        <span className="font-mono text-gray-400 dark:text-zinc-500">{inv.plan}</span>
+                        <span className="font-mono text-gray-400 dark:text-zinc-500">{item.plan}</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
-                      {inv.status === "paid" ? (
+                      {item.status === "paid" ? (
                         <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-medium border border-gray-200 dark:border-zinc-700 bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-zinc-300 uppercase tracking-wider">
                           Paid
+                        </span>
+                      ) : item.status === "pending" ? (
+                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-medium border border-amber-200 dark:border-amber-500/20 bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 uppercase tracking-wider">
+                          Pending
                         </span>
                       ) : (
                         <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-medium border border-red-200 dark:border-red-500/20 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 uppercase tracking-wider">
                           Failed
                         </span>
                       )}
-                      <button className="text-gray-400 dark:text-zinc-500 hover:text-gray-900 dark:hover:text-zinc-200 transition-colors opacity-0 group-hover:opacity-100">
-                        <DocumentDownload size={16} color="currentColor" />
-                      </button>
                     </div>
                   </div>
                 ))}
               </div>
-              <div className="p-4 border-t border-gray-200 dark:border-zinc-800/80 bg-gray-50/50 dark:bg-zinc-900/30 text-center">
-                <button className="text-[11px] font-medium text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 transition-colors flex items-center justify-center gap-1.5 w-full">
-                  View All Invoices <ArrowRight2 size={12} color="currentColor" />
-                </button>
-              </div>
+              {historyData && historyData.total > historyData.history.length && (
+                <div className="p-4 border-t border-gray-200 dark:border-zinc-800/80 bg-gray-50/50 dark:bg-zinc-900/30 text-center">
+                  <button className="text-[11px] font-medium text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-zinc-100 transition-colors flex items-center justify-center gap-1.5 w-full">
+                    View All Invoices <ArrowRight2 size={12} color="currentColor" />
+                  </button>
+                </div>
+              )}
             </div>
 
           </div>
         </div>
 
         {/* Modals */}
-        {showUpgradeModal && <UpgradeModal onClose={() => setShowUpgradeModal(false)} />}
+        {showUpgradeModal && (
+          <UpgradeModal
+            plans={planData.plans}
+            currentPlan={planData.current_plan}
+            onClose={() => setShowUpgradeModal(false)}
+          />
+        )}
         {showCancelModal && <CancelModal onClose={() => setShowCancelModal(false)} />}
       </div>
     </Layout>

@@ -77,6 +77,7 @@ export interface AuthUser {
   email: string;
   department: string;
   status: UserStatus;
+  avatar_url?: string;
   permissions: PermissionMap;
 }
 
@@ -99,8 +100,20 @@ export interface MeUser {
     permissions: PermissionMap;
   } | null;
   status: UserStatus;
+  avatar_url?: string;
   permissions: PermissionMap;
   org: Org;
+}
+
+
+export interface UpdateMeResponse {
+  id: string;
+  name: string;
+  email: string;
+  department: string;
+  status: UserStatus;
+  avatar_url?: string;
+  permissions: PermissionMap;
 }
 
 // ── Payloads ───────────────────────────────────────────────────────────────
@@ -108,6 +121,14 @@ export interface MeUser {
 export interface LoginPayload {
   email: string;
   password: string;
+}
+
+export interface UpdateMePayload {
+  name?: string;
+  email?: string;
+  current_password?: string;
+  new_password?: string;
+  avatar?: File;
 }
 
 // ── Query Keys ─────────────────────────────────────────────────────────────
@@ -143,6 +164,7 @@ export function useLogin() {
         email: data.user.email,
         department: null, // full dept object comes from /auth/me
         status: data.user.status,
+        avatar_url: data.user.avatar_url,
         permissions: data.user.permissions,
         org: data.org,
       } satisfies MeUser);
@@ -164,6 +186,52 @@ export function useMe(enabled = true) {
     enabled,
     staleTime: 1000 * 60 * 5,
     retry: false,
+  });
+}
+
+// Update the logged-in user's own name / email / password / avatar
+export function useUpdateMe() {
+  const queryClient = useQueryClient();
+
+  return useMutation<UpdateMeResponse, AxiosError<APIError>, UpdateMePayload>({
+    mutationFn: async ({ avatar, ...fields }) => {
+      const form = new FormData();
+
+      if (fields.name !== undefined) form.append("name", fields.name);
+      if (fields.email !== undefined) form.append("email", fields.email);
+      if (fields.current_password !== undefined) {
+        form.append("current_password", fields.current_password);
+      }
+      if (fields.new_password !== undefined) {
+        form.append("new_password", fields.new_password);
+      }
+      if (avatar) form.append("avatar", avatar);
+
+      const { data } = await api.put<{ data: UpdateMeResponse }>(
+        "/auth/me",
+        form,
+        { headers: { "Content-Type": "multipart/form-data" } },
+      );
+      return data.data;
+    },
+    onSuccess: (data) => {
+
+      queryClient.setQueryData<MeUser | undefined>(authKeys.me(), (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          name: data.name,
+          email: data.email,
+          status: data.status,
+          avatar_url: data.avatar_url,
+          permissions: data.permissions,
+        };
+      });
+      toast.success("Profile updated successfully");
+    },
+    onError: (error) => {
+      toast.error(getErrorMessage(error, "Failed to update profile"));
+    },
   });
 }
 

@@ -1,7 +1,7 @@
-import  { useState } from "react";
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
- 
+
   Receipt21,
   TickCircle,
   ClipboardText,
@@ -55,24 +55,25 @@ export interface SidebarUser {
   name: string;
   role: string;
   avatarColor: string;
+  avatarUrl?: string;
   permissions: UserPermissions;
 }
 
 // type PermissionKey = keyof UserPermissions | null;
 
 const NAV_LINKS = [
-  { label: "My Vouchers",     icon: Receipt21,     href: "/voucher",         permission: "can_create" },
-  { label: "Pending Approvals",       icon: TickCircle,    href: "/approvals",       permission: "can_approve", badge: 3 },
-  { label: "All Vouchers",    icon: ClipboardText, href: "/all-vouchers",    permission: "can_view_all" },
-  { label: "Reports",         icon: Chart21,       href: "/reports",         permission: "can_view_reports" },
-  { label: "Voucher Types",   icon: Layer,         href: "/voucher-types",   permission: "can_view_voucher_types" },
-  { label: "Approval Chains", icon: Layer,         href: "/approval-chains", permission: "can_view_approval_chains" },
-  { label: "Departments",     icon: Buildings2,    href: "/departments",     permission: "can_view_departments" },
-  { label: "Users & Roles",   icon: People,  href: "/users",           permission: "can_manage_users" },
-  { label: "Audit Log",       icon: DocumentText1, href: "/audit-logs",      permission: "can_view_audit_logs" },
-  { label: "Billings",        icon: Money3,      href: "/billings",        permission: "can_view_billings" },
-  { label: "My Profile",        icon: Profile2User,       href: "/profile",       permission: null },
-  { label: "Organisation",        icon: Setting2,      href: "/settings",        permission: "can_configure" },
+  { label: "My Vouchers", icon: Receipt21, href: "/voucher", permission: "can_create" },
+  { label: "Pending Approvals", icon: TickCircle, href: "/approvals", permission: "can_approve", badge: 3 },
+  { label: "All Vouchers", icon: ClipboardText, href: "/all-vouchers", permission: "can_view_all" },
+  { label: "Reports", icon: Chart21, href: "/reports", permission: "can_view_reports" },
+  { label: "Voucher Types", icon: Layer, href: "/voucher-types", permission: "can_view_voucher_types" },
+  { label: "Approval Chains", icon: Layer, href: "/approval-chains", permission: "can_view_approval_chains" },
+  { label: "Departments", icon: Buildings2, href: "/departments", permission: "can_view_departments" },
+  { label: "Users & Roles", icon: People, href: "/users", permission: "can_manage_users" },
+  { label: "Audit Log", icon: DocumentText1, href: "/audit-logs", permission: "can_view_audit_logs" },
+  { label: "Billings", icon: Money3, href: "/billings", permission: "can_view_billings" },
+  { label: "My Profile", icon: Profile2User, href: "/profile", permission: null },
+  { label: "Organisation", icon: Setting2, href: "/settings", permission: "can_configure" },
 ];
 
 interface SidebarProps {
@@ -96,8 +97,8 @@ export default function Sidebar({ user, onLogout }: SidebarProps) {
     return links
       .filter(
         (link) =>
-     link.permission === null ||
-user.permissions[link.permission as keyof UserPermissions]
+          link.permission === null ||
+          user.permissions[link.permission as keyof UserPermissions]
       )
       .map((link) => {
         const Icon = link.icon;
@@ -107,10 +108,9 @@ user.permissions[link.permission as keyof UserPermissions]
             to={link.href}
             onClick={() => setMobileOpen(false)}
             className={({ isActive }) =>
-              `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ${
-                isActive
-                  ? "bg-slate-200 text-black"
-                  : "text-gray-400 hover:bg-white/10 hover:text-white"
+              `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ${isActive
+                ? "bg-slate-200 text-black"
+                : "text-gray-400 hover:bg-white/10 hover:text-white"
               }`
             }
           >
@@ -151,28 +151,32 @@ user.permissions[link.permission as keyof UserPermissions]
       <div className="flex-1 overflow-y-auto px-3 py-5">
         <div className="space-y-1">{renderLinks(NAV_LINKS)}</div>
 
-                <button
-            onClick={onLogout}
-            className="text-red-500 flex gap-2 px-3 pt-4 transition-colors hover:text-white"
-          >
-             <Logout size={20} color="currentColor" /><span className="block">Log out</span>
-          </button>
+        <button
+          onClick={onLogout}
+          className="text-red-500 flex gap-2 px-3 pt-4 transition-colors hover:text-white"
+        >
+          <Logout size={20} color="currentColor" /><span className="block">Log out</span>
+        </button>
       </div>
 
       {/* User */}
       <div className="border-t border-white/10 p-4">
         <div className="flex items-center gap-3">
           <div
-            className="flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold text-white"
+            className="flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold text-white overflow-hidden"
             style={{ backgroundColor: user.avatarColor }}
           >
-            {initials(user.name)}
+            {user.avatarUrl ? (
+              <img src={user.avatarUrl} alt={user.name} className="h-full w-full object-cover" />
+            ) : (
+              initials(user.name)
+            )}
           </div>
           <div className="flex-1">
             <p className="text-sm font-medium text-white">{user.name}</p>
             <p className="text-xs text-gray-500">{user.role}</p>
           </div>
-  
+
         </div>
       </div>
     </div>
@@ -193,20 +197,17 @@ user.permissions[link.permission as keyof UserPermissions]
 
       {/* Mobile Drawer */}
       <div
-        className={`fixed inset-0 z-50 lg:hidden transition-all duration-300 ${
-          mobileOpen ? "visible" : "invisible"
-        }`}
+        className={`fixed inset-0 z-50 lg:hidden transition-all duration-300 ${mobileOpen ? "visible" : "invisible"
+          }`}
       >
         <div
-          className={`absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${
-            mobileOpen ? "opacity-100" : "opacity-0"
-          }`}
+          className={`absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300 ${mobileOpen ? "opacity-100" : "opacity-0"
+            }`}
           onClick={() => setMobileOpen(false)}
         />
         <div
-          className={`absolute left-0 top-0 h-full w-[270px] shadow-2xl transition-transform duration-300 ease-in-out ${
-            mobileOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
+          className={`absolute left-0 top-0 h-full w-[270px] shadow-2xl transition-transform duration-300 ease-in-out ${mobileOpen ? "translate-x-0" : "-translate-x-full"
+            }`}
         >
           {SidebarContent}
         </div>
