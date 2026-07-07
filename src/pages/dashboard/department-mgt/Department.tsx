@@ -29,12 +29,11 @@ import {
 } from "../../../api/hooks/useDepartments";
 import type { PermissionMap } from "../../../api/hooks/useAuth";
 
-
 type Permission = keyof PermissionMap;
 
 interface PermissionGroup {
   label: string;
-  manageKey?: Permission; // when set, this toggle also flips every key in `perms`
+  manageKey?: Permission; 
   perms: Permission[];
 }
 
@@ -152,10 +151,10 @@ function formatDate(d: string) {
 
 function StatCard({ label, value, sub }: { label: string; value: string | number; sub: string }) {
   return (
-    <div className="bg-pri border border-zinc-800/80 rounded-xl p-5 flex flex-col justify-between shadow-sm">
-      <p className="text-xs text-zinc-400 font-medium mb-3">{label}</p>
-      <p className="text-2xl font-medium text-zinc-50 tracking-tight">{value}</p>
-      <p className="text-[11px] text-zinc-500 mt-2">{sub}</p>
+    <div className="bg-zinc-900/50 border border-zinc-800/80 rounded-xl p-4 sm:p-5 flex flex-col justify-between shadow-sm min-w-0 transition-colors">
+      <p className="text-xs text-zinc-400 font-medium mb-3 truncate">{label}</p>
+      <p className="text-xl sm:text-2xl font-medium text-zinc-50 tracking-tight truncate">{value}</p>
+      <p className="text-[11px] text-zinc-500 mt-2 truncate">{sub}</p>
     </div>
   );
 }
@@ -183,7 +182,7 @@ function PermToggle({
     <button
       type="button"
       onClick={onClick}
-      className={`flex items-center gap-2 text-left px-2.5 py-2 rounded-lg border transition-all ${
+      className={`flex items-start sm:items-center gap-2.5 text-left px-3 py-2 rounded-lg border transition-all ${
         emphasis
           ? checked
             ? "border-zinc-500 bg-zinc-800"
@@ -194,29 +193,31 @@ function PermToggle({
       }`}
     >
       <span
-        className={`w-4 h-4 rounded flex items-center justify-center flex-shrink-0 border ${
+        className={`w-4 h-4 mt-0.5 sm:mt-0 rounded flex items-center justify-center flex-shrink-0 border transition-colors ${
           checked ? "bg-zinc-100 border-zinc-100 text-zinc-900" : "border-zinc-700 text-transparent"
         }`}
       >
         <CheckMark />
       </span>
-      <span className={`text-xs ${emphasis ? "font-semibold text-zinc-100" : "text-zinc-300"}`}>{label}</span>
+      <span className={`text-xs leading-snug ${emphasis ? "font-semibold text-zinc-100" : "text-zinc-300"}`}>
+        {label}
+      </span>
     </button>
   );
 }
 
 function SkeletonRow() {
   return (
-    <div className="bg-pri border border-zinc-800/80 rounded-xl px-5 py-4 flex items-center gap-4 animate-pulse">
-      <div className="w-10 h-10 rounded-xl bg-zinc-800/60 flex-shrink-0" />
+    <div className="bg-zinc-900/50 border border-zinc-800/80 rounded-xl px-4 sm:px-5 py-4 flex items-center gap-4 animate-pulse">
+      <div className="w-10 h-10 rounded-lg bg-zinc-800 flex-shrink-0" />
       <div className="flex-1 space-y-2">
-        <div className="h-3.5 w-32 bg-zinc-800/60 rounded" />
-        <div className="h-2.5 w-24 bg-zinc-800/60 rounded" />
+        <div className="h-3.5 w-32 bg-zinc-800 rounded" />
+        <div className="h-2.5 w-24 bg-zinc-800 rounded" />
       </div>
       <div className="hidden sm:flex gap-8">
-        <div className="h-3 w-10 bg-zinc-800/60 rounded" />
-        <div className="h-3 w-10 bg-zinc-800/60 rounded" />
-        <div className="h-3 w-16 bg-zinc-800/60 rounded" />
+        <div className="h-3 w-10 bg-zinc-800 rounded" />
+        <div className="h-3 w-10 bg-zinc-800 rounded" />
+        <div className="h-3 w-16 bg-zinc-800 rounded" />
       </div>
     </div>
   );
@@ -278,10 +279,10 @@ function DeptModal({
   const canSave = !!name.trim() && !!code.trim() && !isSaving;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm bg-black/60 transition-opacity">
-      <div className="relative bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-lg shadow-2xl flex flex-col overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 backdrop-blur-sm bg-black/60 transition-opacity">
+      <div className="relative bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-lg shadow-2xl flex flex-col max-h-[95vh] overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800 bg-pri">
+        <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-zinc-800 bg-zinc-900/50 flex-shrink-0">
           <div>
             <h2 className="text-sm font-medium text-zinc-100">{isNew ? "Create Department" : "Edit Department"}</h2>
             <p className="text-[11px] text-zinc-500 mt-0.5">
@@ -296,7 +297,7 @@ function DeptModal({
         </div>
 
         {/* Body */}
-        <div className="p-6 space-y-6 custom-scrollbar overflow-y-auto max-h-[70vh]">
+        <div className="p-4 sm:p-6 space-y-6 overflow-y-auto flex-1 bg-zinc-950/30">
           {/* Icon picker */}
           <div>
             <label className="block text-[10px] font-medium text-zinc-500 mb-2 uppercase tracking-widest">
@@ -310,7 +311,7 @@ function DeptModal({
                   className={`w-10 h-10 rounded-lg border flex items-center justify-center transition-all ${
                     iconKey === key
                       ? "border-zinc-400 bg-zinc-800 text-zinc-100 shadow-sm"
-                      : "border-zinc-800/80 bg-zinc-950/50 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800 hover:border-zinc-700"
+                      : "border-zinc-800 bg-zinc-950 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800 hover:border-zinc-700"
                   }`}
                 >
                   {ICON_MAP[key]}
@@ -319,66 +320,68 @@ function DeptModal({
             </div>
           </div>
 
-          {/* Name */}
-          <div>
-            <label className="block text-xs font-medium text-zinc-400 mb-1.5">Department Name</label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Site Operations"
-              className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 transition-all font-medium"
-            />
-          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Name */}
+            <div>
+              <label className="block text-xs font-medium text-zinc-400 mb-1.5">Department Name</label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="e.g. Site Operations"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-zinc-200 placeholder-zinc-600 outline-none focus:border-zinc-600 transition-colors font-medium"
+              />
+            </div>
 
-          {/* Code */}
-          <div>
-            <label className="block text-xs font-medium text-zinc-400 mb-1.5">Short Code</label>
-            <input
-              type="text"
-              value={code}
-              onChange={(e) => setCode(e.target.value.toUpperCase().slice(0, 6))}
-              placeholder="e.g. SITE"
-              className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 transition-all font-mono tracking-widest"
-            />
-            <p className="text-[11px] text-zinc-500 mt-1.5">
-              Used as a prefix in issue codes (e.g. SITE-001). Max 6 characters.
-            </p>
+            {/* Code */}
+            <div>
+              <label className="block text-xs font-medium text-zinc-400 mb-1.5">Short Code</label>
+              <input
+                type="text"
+                value={code}
+                onChange={(e) => setCode(e.target.value.toUpperCase().slice(0, 6))}
+                placeholder="e.g. SITE"
+                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2.5 text-sm text-zinc-200 placeholder-zinc-600 outline-none focus:border-zinc-600 transition-colors font-mono tracking-widest"
+              />
+            </div>
           </div>
+          <p className="text-[11px] text-zinc-500 mt-1.5 -translate-y-3">
+            Code used as a prefix in issue codes (e.g. SITE-001). Max 6 characters.
+          </p>
 
           {/* Permissions */}
-          <div>
-            <div className="flex items-center justify-between mb-3">
+          <div className="pt-2 border-t border-zinc-800/80">
+            <div className="flex items-center justify-between mb-4 mt-2">
               <label className="block text-[10px] font-medium text-zinc-500 uppercase tracking-widest">
                 Permissions
               </label>
               <button
                 type="button"
                 onClick={() => toggleKeys(ALL_PERMISSION_KEYS, !allOn)}
-                className="text-[11px] font-medium text-zinc-400 hover:text-zinc-100 transition-colors"
+                className="text-[11px] font-medium text-zinc-400 hover:text-zinc-100 transition-colors bg-zinc-800 px-2 py-1 rounded"
               >
                 {allOn ? "Clear all" : "Select all"}
               </button>
             </div>
 
-            <div className="space-y-5">
+            <div className="space-y-6">
               {PERMISSION_GROUPS.map((group) => (
-                <div key={group.label}>
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-[11px] font-semibold text-zinc-300">{group.label}</p>
+                <div key={group.label} className="bg-zinc-900/40 border border-zinc-800/50 rounded-xl p-3 sm:p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-xs font-semibold text-zinc-200">{group.label}</p>
                     {group.manageKey && (
                       <button
                         type="button"
                         onClick={() => toggleKeys(group.perms, !group.perms.every((p) => permissions[p]))}
-                        className="text-[10px] text-zinc-500 hover:text-zinc-300 transition-colors"
+                        className="text-[10px] font-medium text-zinc-500 hover:text-zinc-300 transition-colors"
                       >
-                        {group.perms.every((p) => permissions[p]) ? "Clear" : "Select all"}
+                        {group.perms.every((p) => permissions[p]) ? "Clear section" : "Select section"}
                       </button>
                     )}
                   </div>
 
                   {group.manageKey && (
-                    <div className="mb-2">
+                    <div className="mb-3 border-b border-zinc-800/80 pb-3">
                       <PermToggle
                         checked={!!permissions[group.manageKey]}
                         label={`Manage ${group.label} (full access)`}
@@ -388,7 +391,7 @@ function DeptModal({
                     </div>
                   )}
 
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {group.perms.map((p) => (
                       <PermToggle
                         key={String(p)}
@@ -405,18 +408,18 @@ function DeptModal({
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-zinc-800 flex justify-end gap-3 bg-zinc-900/80">
+        <div className="p-4 border-t border-zinc-800 flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 bg-zinc-900/80 flex-shrink-0">
           <button
             onClick={onClose}
             disabled={isSaving}
-            className="px-4 py-2 rounded-lg text-sm text-zinc-400 font-medium hover:text-zinc-100 hover:bg-zinc-800 transition-all disabled:opacity-50"
+            className="px-4 py-2 rounded-lg text-sm text-zinc-400 font-medium hover:text-zinc-100 hover:bg-zinc-800 transition-all disabled:opacity-50 order-2 sm:order-1"
           >
             Cancel
           </button>
           <button
             onClick={handleSave}
             disabled={!canSave}
-            className="px-5 py-2 rounded-lg bg-zinc-100 text-sm text-zinc-900 font-medium hover:bg-white transition-all shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
+            className="px-5 py-2 rounded-lg bg-zinc-100 text-sm text-zinc-900 font-medium hover:bg-white transition-all shadow-sm disabled:opacity-40 disabled:cursor-not-allowed order-1 sm:order-2"
           >
             {isSaving ? "Saving…" : isNew ? "Create Department" : "Save Changes"}
           </button>
@@ -441,8 +444,8 @@ function DeleteModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm bg-black/60 transition-opacity">
       <div className="bg-zinc-900 border border-zinc-800 rounded-xl w-full max-w-sm shadow-2xl overflow-hidden">
         <div className="p-6 space-y-4">
-          <div className="w-10 h-10 rounded-full bg-rose-500/10 border border-rose-500/20 flex items-center justify-center">
-            <Trash color="currentColor" size={18} className="text-rose-400" />
+          <div className="w-10 h-10 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400">
+            <Trash color="currentColor" size={18} />
           </div>
           <div>
             <h2 className="text-sm font-semibold text-zinc-100">Remove {dept.name}?</h2>
@@ -454,25 +457,25 @@ function DeleteModal({
           {dept.active_vouchers > 0 && (
             <div className="flex items-start gap-2.5 bg-amber-500/10 border border-amber-500/20 rounded-lg px-3 py-3">
               <Warning2 color="currentColor" size={14} className="text-amber-400 flex-shrink-0 mt-0.5" />
-              <p className="text-xs text-amber-400">
+              <p className="text-xs text-amber-400 leading-relaxed">
                 {dept.active_vouchers} active issue{dept.active_vouchers !== 1 ? "s are" : " is"} currently attached
                 to this department.
               </p>
             </div>
           )}
         </div>
-        <div className="px-6 pb-5 flex gap-3 justify-end bg-zinc-900/80">
+        <div className="px-6 pb-5 flex flex-col sm:flex-row gap-2 sm:gap-3 justify-end bg-zinc-900/80 pt-4 border-t border-zinc-800">
           <button
             onClick={onClose}
             disabled={isDeleting}
-            className="px-4 py-2 rounded-lg text-sm text-zinc-400 font-medium hover:text-zinc-100 hover:bg-zinc-800 transition-all disabled:opacity-50"
+            className="px-4 py-2 rounded-lg text-sm text-zinc-400 font-medium hover:text-zinc-100 hover:bg-zinc-800 transition-all disabled:opacity-50 order-2 sm:order-1"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
             disabled={isDeleting}
-            className="px-5 py-2 rounded-lg bg-rose-600 text-sm text-white font-medium hover:bg-rose-500 transition-all shadow-sm disabled:opacity-60"
+            className="px-5 py-2 rounded-lg bg-red-600 text-sm text-white font-medium hover:bg-red-500 transition-all shadow-sm disabled:opacity-60 order-1 sm:order-2"
           >
             {isDeleting ? "Deleting…" : "Delete"}
           </button>
@@ -498,19 +501,19 @@ function DeptRow({
   const spendPct = totalSpend > 0 ? (dept.total_spend / totalSpend) * 100 : 0;
 
   return (
-    <div className="group bg-pri border border-zinc-800/80 hover:border-zinc-700 rounded-xl px-5 py-4 flex flex-col sm:flex-row sm:items-center gap-4 transition-all shadow-sm hover:shadow-md">
+    <div className="group bg-zinc-900/50 border border-zinc-800/80 hover:border-zinc-700 rounded-xl p-4 sm:px-5 sm:py-4 flex flex-col sm:flex-row sm:items-center gap-4 transition-all shadow-sm">
       {/* Icon + Basic Info */}
-      <div className="flex items-center gap-4 flex-1 min-w-0">
-        <div className="w-10 h-10 rounded-xl bg-zinc-800/50 border border-zinc-700/50 text-zinc-400 flex items-center justify-center flex-shrink-0 shadow-inner">
+      <div className="flex items-start sm:items-center gap-4 flex-1 min-w-0">
+        <div className="w-10 h-10 rounded-lg bg-zinc-800 border border-zinc-700 text-zinc-400 flex items-center justify-center flex-shrink-0">
           {ICON_MAP[dept.icon_key] || <Building color="currentColor" size={20} variant="Bulk" />}
         </div>
         <div className="min-w-0">
-          <div className="flex items-center gap-2 mb-0.5">
+          <div className="flex items-center flex-wrap gap-2 mb-1">
             <span className="text-sm font-semibold text-zinc-100 truncate">{dept.name}</span>
-            <span className="text-[10px] font-mono font-medium text-zinc-500 bg-zinc-950 border border-zinc-800 px-1.5 py-0.5 rounded tracking-wide flex-shrink-0">
+            <span className="text-[10px] font-mono font-medium text-zinc-400 bg-zinc-950 border border-zinc-800 px-1.5 py-0.5 rounded tracking-wide flex-shrink-0">
               {dept.code}
             </span>
-            <span className="text-[10px] font-medium text-zinc-500 bg-zinc-950 border border-zinc-800 px-1.5 py-0.5 rounded flex-shrink-0">
+            <span className="text-[10px] font-medium text-zinc-500 bg-zinc-900 border border-zinc-800 px-1.5 py-0.5 rounded flex-shrink-0">
               {permCount(dept.permissions)} perms
             </span>
           </div>
@@ -519,7 +522,7 @@ function DeptRow({
       </div>
 
       {/* Metrics Grid */}
-      <div className="grid grid-cols-3 sm:flex items-center gap-6 sm:gap-8 flex-shrink-0 pt-3 border-t border-zinc-800/50 sm:pt-0 sm:border-0 mt-1 sm:mt-0">
+      <div className="grid grid-cols-3 sm:flex items-center gap-4 sm:gap-8 flex-shrink-0 pt-3 border-t border-zinc-800/50 sm:pt-0 sm:border-0 mt-1 sm:mt-0 w-full sm:w-auto">
         <div className="text-left sm:text-center">
           <p className="text-sm font-semibold text-zinc-100">{dept.head_count}</p>
           <p className="text-[10px] text-zinc-500 mt-0.5">Staff</p>
@@ -535,8 +538,8 @@ function DeptRow({
           <p className="text-[10px] text-zinc-500 mt-0.5">Active</p>
         </div>
 
-        <div className="text-right min-w-[100px]">
-          <p className="text-sm font-semibold text-zinc-100">{formatAmount(dept.total_spend)}</p>
+        <div className="text-right min-w-[90px]">
+          <p className="text-sm font-semibold text-zinc-100 truncate">{formatAmount(dept.total_spend)}</p>
           <div className="mt-1.5 h-1 w-full bg-zinc-800 rounded-full overflow-hidden">
             <div className="h-full bg-zinc-400 rounded-full transition-all duration-500" style={{ width: `${spendPct}%` }} />
           </div>
@@ -544,22 +547,22 @@ function DeptRow({
         </div>
       </div>
 
-      {/* Actions */}
+      {/* Desktop Actions */}
       <div className="hidden sm:flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 pl-2 ml-2 border-l border-zinc-800">
-        <button onClick={onEdit} className="p-1.5 rounded-md text-zinc-500 hover:text-zinc-100 hover:bg-zinc-800 transition-colors">
+        <button onClick={onEdit} className="p-1.5 rounded-md text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800 transition-colors">
           <Edit2 size={16} color="currentColor" />
         </button>
-        <button onClick={onDelete} className="p-1.5 rounded-md text-zinc-500 hover:text-rose-400 hover:bg-zinc-800 transition-colors">
+        <button onClick={onDelete} className="p-1.5 rounded-md text-zinc-400 hover:text-red-400 hover:bg-red-500/10 transition-colors">
           <Trash size={16} color="currentColor" />
         </button>
       </div>
 
       {/* Mobile Actions */}
       <div className="sm:hidden flex items-center justify-end gap-2 pt-2">
-        <button onClick={onEdit} className="text-[11px] text-zinc-400 px-3 py-1 rounded bg-zinc-800/50 border border-zinc-800">
+        <button onClick={onEdit} className="text-[11px] text-zinc-300 px-3 py-1.5 rounded bg-zinc-800 border border-zinc-700">
           Edit
         </button>
-        <button onClick={onDelete} className="text-[11px] text-rose-400 px-3 py-1 rounded bg-rose-500/10 border border-rose-500/20">
+        <button onClick={onDelete} className="text-[11px] text-red-400 px-3 py-1.5 rounded bg-red-500/10 border border-red-500/20">
           Delete
         </button>
       </div>
@@ -612,19 +615,19 @@ export default function DepartmentsPage() {
       <div className="min-h-screen bg-zinc-950 text-zinc-300 font-sans pb-16 selection:bg-zinc-800 selection:text-zinc-100">
         {/* Top Nav */}
         <div className="border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-10">
-          <div className="px-6 h-16 flex items-center justify-between max-w-7xl mx-auto">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-zinc-900 rounded-lg border border-zinc-800/80 shadow-sm">
+          <div className="px-4 sm:px-6 py-3 sm:py-0 sm:h-16 flex flex-col sm:flex-row sm:items-center justify-between gap-3 max-w-7xl mx-auto">
+            <div className="flex items-center gap-3 min-w-0 flex-wrap">
+              <div className="p-2 bg-zinc-900 rounded-lg border border-zinc-800/80 shadow-sm flex-shrink-0">
                 <Building color="currentColor" size={18} className="text-zinc-400" />
               </div>
-              <h1 className="text-sm font-medium text-zinc-100">Departments</h1>
-              <span className="ml-2 bg-zinc-900 border border-zinc-800 text-zinc-400 text-[11px] px-2.5 py-0.5 rounded-full font-mono">
+              <h1 className="text-sm font-medium text-zinc-100 truncate">Departments</h1>
+              <span className="bg-zinc-900 border border-zinc-800 text-zinc-400 text-[11px] px-2.5 py-0.5 rounded-full font-mono whitespace-nowrap">
                 {departments.length}
               </span>
             </div>
             <button
               onClick={() => setEditingDept("new")}
-              className="flex items-center gap-1.5 bg-zinc-100 hover:bg-white transition-all text-zinc-950 text-sm font-medium px-4 py-2 rounded-lg shadow-sm"
+              className="flex items-center justify-center gap-1.5 bg-zinc-100 hover:bg-white transition-all text-zinc-900 text-xs sm:text-sm font-medium px-4 py-2 rounded-lg shadow-sm"
             >
               <Add size={16} />
               New Department
@@ -632,19 +635,19 @@ export default function DepartmentsPage() {
           </div>
         </div>
 
-        <div className="px-6 py-8 max-w-7xl mx-auto space-y-8">
+        <div className="px-4 sm:px-6 py-6 sm:py-8 max-w-7xl mx-auto space-y-8">
           {/* KPIs */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
             <StatCard label="Total Departments" value={departments.length} sub="Active cost centers" />
             <StatCard label="Total Staff" value={totalStaff} sub="Across all operations" />
             <StatCard label="Active Issues" value={totalActiveVouchers} sub="Pending approval currently" />
             <StatCard label="Aggregate Spend" value={formatAmount(totalSpend)} sub="Total approved historical value" />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 items-start">
             {/* Left Col: Search + List */}
             <div className="lg:col-span-2 space-y-4">
-              <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-zinc-900/30 p-2 rounded-xl border border-zinc-800/50">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-stretch sm:items-center justify-between bg-zinc-900/30 p-2 rounded-xl border border-zinc-800/50">
                 <div className="relative w-full sm:w-80">
                   <SearchNormal1
                     color="currentColor"
@@ -655,18 +658,18 @@ export default function DepartmentsPage() {
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Search by name or code..."
-                    className="w-full bg-zinc-900 border-none rounded-lg pl-10 pr-4 py-2 text-sm text-zinc-200 placeholder-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-700 transition-all"
+                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg pl-10 pr-4 py-2 text-sm text-zinc-200 placeholder-zinc-600 focus:outline-none focus:border-zinc-600 transition-all"
                   />
                 </div>
-                <div className="w-full sm:w-auto text-xs text-zinc-500 pr-2 font-medium">
+                <div className="w-full sm:w-auto text-xs text-zinc-500 sm:pr-2 font-medium text-center sm:text-right">
                   Showing {filtered.length} results
                 </div>
               </div>
 
               {isError ? (
-                <div className="py-24 flex flex-col items-center justify-center text-center border border-dashed border-zinc-800 rounded-xl bg-zinc-900/20">
-                  <Warning2 size={32} color="currentColor" className="text-rose-400 mb-4" />
-                  <p className="text-sm font-medium text-rose-400">Failed to load departments</p>
+                <div className="py-16 sm:py-24 flex flex-col items-center justify-center text-center border border-dashed border-zinc-800 rounded-xl bg-zinc-900/20 px-4">
+                  <Warning2 size={32} color="currentColor" className="text-red-400 mb-4" />
+                  <p className="text-sm font-medium text-red-400">Failed to load departments</p>
                   <p className="text-xs text-zinc-500 mt-1">
                     {(error as any)?.response?.data?.message || error?.message || "Please try again."}
                   </p>
@@ -678,7 +681,7 @@ export default function DepartmentsPage() {
                   ))}
                 </div>
               ) : filtered.length === 0 ? (
-                <div className="py-24 flex flex-col items-center justify-center text-center border border-dashed border-zinc-800 rounded-xl bg-zinc-900/20">
+                <div className="py-16 sm:py-24 flex flex-col items-center justify-center text-center border border-dashed border-zinc-800 rounded-xl bg-zinc-900/20 px-4">
                   <Building size={32} color="currentColor" className="text-zinc-600 mb-4" />
                   <p className="text-sm font-medium text-zinc-300">No departments found</p>
                   <p className="text-xs text-zinc-500 mt-1">Adjust your search term or create a new department.</p>
@@ -700,7 +703,7 @@ export default function DepartmentsPage() {
 
             {/* Right Col: Spend Breakdown */}
             {!isLoading && !isError && departments.length > 0 && (
-              <div className="bg-zinc-900/40 border border-zinc-800/50 rounded-xl p-6 sticky top-24">
+              <div className="bg-zinc-900/40 border border-zinc-800/50 rounded-xl p-5 sm:p-6 lg:sticky lg:top-24">
                 <h3 className="text-sm font-medium text-zinc-100 mb-1">Spend Distribution</h3>
                 <p className="text-xs text-zinc-500 mb-6">Historical expenditure split across all active cost centers.</p>
 
@@ -712,13 +715,13 @@ export default function DepartmentsPage() {
                       return (
                         <div key={dept.id} className="group">
                           <div className="flex items-center justify-between mb-1.5">
-                            <div className="flex items-center gap-2 min-w-0">
-                              <span className="text-zinc-400">
+                            <div className="flex items-center gap-2 min-w-0 pr-2">
+                              <span className="text-zinc-500 flex-shrink-0">
                                 {ICON_MAP[dept.icon_key] || <Building size={16} variant="Bulk" />}
                               </span>
                               <span className="text-xs font-medium text-zinc-300 truncate">{dept.name}</span>
                             </div>
-                            <span className="text-xs font-mono text-zinc-400">{formatAmount(dept.total_spend)}</span>
+                            <span className="text-xs font-mono text-zinc-400 flex-shrink-0">{formatAmount(dept.total_spend)}</span>
                           </div>
                           <div className="flex items-center gap-3">
                             <div className="flex-1 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
@@ -727,7 +730,7 @@ export default function DepartmentsPage() {
                                 style={{ width: `${pct}%` }}
                               />
                             </div>
-                            <span className="text-[10px] font-mono text-zinc-500 w-8 text-right">{pct.toFixed(1)}%</span>
+                            <span className="text-[10px] font-mono text-zinc-500 w-8 text-right flex-shrink-0">{pct.toFixed(1)}%</span>
                           </div>
                         </div>
                       );
