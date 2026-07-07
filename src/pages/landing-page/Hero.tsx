@@ -1,6 +1,7 @@
 import React from "react";
 import { ArrowRight } from "iconsax-react";
 
+import { Link } from "react-scroll"; 
 // ─── Avatar data ──────────────────────────────────────────────────────────────
 
 const AVATARS = [
@@ -79,13 +80,6 @@ export default function HeroSection() {
   return (
     <main className="relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden bg-zinc-950">
 
-      {/* ── Arc glow at bottom ── */}
-      {/* <div className="pointer-events-none hi absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[900px]">
-        <div className="absolute inset-0 rounded-[50%] bg-zinc-300/5 blur-3xl" />
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-[180px] rounded-[50%] bg-zinc-200/10 blur-2xl" />
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-[80px] rounded-[50%] bg-white/10 blur-xl" />
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/3 h-[40px] rounded-[50%] bg-white/20 blur-md" />
-      </div> */}
 
       {/* ── Ambient glows ── */}
       <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 w-[560px] h-64 bg-zinc-300/10 blur-3xl rounded-full" />
@@ -123,18 +117,25 @@ export default function HeroSection() {
         {/* CTAs */}
         <div className="flex flex-col sm:flex-row items-center gap-3 mb-12 sm:mb-16 w-full sm:w-auto">
           <a
-            href="#contact"
+            href="/onboarding"
             className="w-full sm:w-auto flex items-center justify-center gap-2 bg-zinc-100 hover:bg-white text-zinc-950 text-sm font-semibold px-6 py-3 rounded-xl transition-all shadow-sm"
           >
             Get started
             <ArrowRight size={15} color="currentColor" />
           </a>
-          <a
-            href="#how-it-works"
+          <Link 
+       
+    
+                spy={true}
+                smooth={true}
+                offset={-80} 
+                duration={500}
+
+            to="how-it-works"
             className="w-full sm:w-auto flex items-center justify-center gap-2 bg-zinc-900/60 hover:bg-zinc-800/80 border border-zinc-700/50 text-zinc-300 text-sm font-medium px-6 py-3 rounded-xl transition-all"
           >
             See how it works
-          </a>
+          </Link>
         </div>
 
         {/* social proof strip */}

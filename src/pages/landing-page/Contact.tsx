@@ -55,7 +55,7 @@ export default function ContactSection() {
   };
 
   return (
-    <div className="px-4 sm:px-6 py-20 max-w-6xl mx-auto">
+    <div id="contact" className="px-4 sm:px-6 py-20 max-w-6xl mx-auto">
       {/* Header */}
       <div className="text-center max-w-lg mx-auto mb-14">
         <div className="inline-flex items-center gap-2 bg-zinc-900 border border-zinc-800/60 rounded-full px-4 py-1.5 mb-6">

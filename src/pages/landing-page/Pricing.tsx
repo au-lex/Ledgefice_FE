@@ -212,7 +212,7 @@ export default function PricingSection() {
     }
 
     return (
-        <div className="px-4 sm:px-6 py-20 max-w-6xl mx-auto">
+        <div id="pricing" className="px-4 sm:px-6 py-20 max-w-6xl mx-auto">
             <div className="text-center max-w-lg mx-auto mb-8">
                 <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-zinc-50 mb-3">
                     Pricing that scales with your departments
