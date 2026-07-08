@@ -1,73 +1,48 @@
-# React + TypeScript + Vite
+# LedgeFice Voucher & Approval Management SaaS
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A multi-tenant SaaS platform that replaces paper vouchers and WhatsApp approval chains with a configurable digital voucher request and approval management system for African businesses.
 
-Currently, two official plugins are available:
+## About the Project
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+LedgeFice  allows any organisation  construction companies, hospitals, schools, NGOs, logistics firms  to sign up and configure their own voucher types, roles, approval chains, and amount thresholds. Staff raise digital voucher requests, the system routes them automatically to the correct approvers based on amount, every action is permanently recorded in an audit log, and management gets real-time spend visibility across all departments.
 
-## React Compiler
+## Live Demo
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+🔗 https://ledgefice.vercel.app
 
-## Expanding the ESLint configuration
+Use the credentials below to explore the platform without signing up:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+**Org Admin** (full configuration access — roles, voucher types, approval chains, staff management)
+Email: aulexc4d2@gmail.com
+Password: 12345678
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+Or create your own organisation by clicking "Sign Up" and walking through the onboarding wizard.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Tech Stack
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- **Frontend:** React + TypeScript + Vite + TanStack Query
+- **Styling:** Tailwind CSS
+- **Backend:** Go + Fiber + GORM
+- **Database:** PostgreSQL
+- **Auth:** JWT
+- **Email:** Resend API
+- **Payments:** Nomba API (checkout, card tokenization, direct debit mandate)
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Key Features
+
+- Multi-tenant architecture with complete org isolation
+- Dynamic voucher type builder with custom fields (EAV pattern)
+- Configurable approval chains by voucher type and amount tier
+- Permission-based role system with 7 runtime-gated flags
+- Automatic duplicate detection against 12-month history
+- Immutable audit log on every action
+- Email notifications at every approval step
+- Management dashboard with spend analytics
+- Subscription billing with card tokenization and direct debit mandate via Nomba API
+
+## Related Repositories
+
+- Frontend: https://github.com/au-lex/Ledgefice_FE
+- Backend: https://github.com/au-lex/Ledgefice_BE
