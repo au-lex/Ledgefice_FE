@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CloseCircle, Bank as BankIcon, TickCircle } from "iconsax-react";
+import { CloseCircle, TickCircle } from "iconsax-react";
 import {
   useListBanks,
   useLookupAccount,

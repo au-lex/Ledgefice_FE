@@ -1,7 +1,7 @@
 import * as React from "react";
 import {
   createBrowserRouter,
-  Route,
+
   RouterProvider,
 } from "react-router-dom";
 
