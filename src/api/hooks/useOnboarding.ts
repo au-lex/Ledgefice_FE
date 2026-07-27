@@ -4,20 +4,18 @@ import { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import api from "../lib/axios";
 import type { APIError } from "../lib/types";
-import type { Org } from "./useAuth";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
-export interface OnboardingOwner {
-  id: string;
-  email: string;
-}
-
+// Setup() never creates the org/user synchronously — it only creates a
+// PendingSignup and hands back a Paystack checkout link. The org/owner don't
+// exist until the "charge.success" webhook fires, so they can't be part of
+// this response (the previous org/owner fields here didn't match what the
+// backend actually sends).
 export interface OnboardingResponse {
-  checkout_link: any;
   message: string;
-  org: Org;
-  owner: OnboardingOwner;
+  checkout_link: string;
+  order_reference: string;
 }
 
 export interface OrganizationDetails {
@@ -106,7 +104,8 @@ export function useSetupWorkspace() {
       return data;
     },
     onSuccess: (data) => {
-      toast.success(data.message || "Workspace created successfully");
+      toast.success(data.message || "Redirecting to checkout...");
+      // Caller navigates: window.location.href = data.checkout_link;
     },
     onError: (error) => {
       toast.error(getErrorMessage(error, "Failed to create workspace"));
@@ -158,7 +157,6 @@ export function useUpdateOrganization() {
     },
   });
 }
-
 
 export function useChangePassword() {
   return useMutation<ChangePasswordResponse, AxiosError<APIError>, ChangePasswordPayload>({

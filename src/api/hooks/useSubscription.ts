@@ -93,24 +93,21 @@ export interface SubscriptionHistoryParams {
   limit?: number;
 }
 
-export interface TokenizedCard {
-  card_pan: string;
-  card_type: string;
-  token_key: string;
-}
-
-export interface MyLiveTokenResponse {
-  has_token: boolean;
-  cards?: TokenizedCard[];
-  message?: string;
+// Renamed from the Nomba-era "TokenizedCard" — Paystack's saved payment
+// method covers both cards and direct debit, so "card_pan"/"token_key" no
+// longer fit. Backend now sends channel/card_type/last4.
+export interface SavedPaymentMethod {
+  channel: string; // "card" | "direct_debit" | "bank_transfer"
+  card_type?: string;
+  last4?: string;
 }
 
 export interface MyTokenResponse {
   has_token: boolean;
   subscription_id?: string;
-  token_key?: string;
+  channel?: string;
   card_type?: string;
-  card_pan?: string;
+  last4?: string;
   message?: string;
 }
 
@@ -125,7 +122,6 @@ export const subscriptionKeys = {
   myPlan: () => [...subscriptionKeys.all, "my-plan"] as const,
   myHistory: (params: SubscriptionHistoryParams) =>
     [...subscriptionKeys.all, "my-history", params] as const,
-  myLiveToken: () => [...subscriptionKeys.all, "my-live-token"] as const,
   myToken: () => [...subscriptionKeys.all, "my-token"] as const,
 } as const;
 
@@ -185,9 +181,6 @@ export function useMyHistory(params: SubscriptionHistoryParams = {}) {
   });
 }
 
-
-
-
 export function useMyToken() {
   return useQuery<MyTokenResponse, AxiosError<APIError>>({
     queryKey: subscriptionKeys.myToken(),
@@ -197,8 +190,6 @@ export function useMyToken() {
     },
   });
 }
-
-
 
 export function useDeleteMyToken() {
   const queryClient = useQueryClient();
@@ -211,11 +202,11 @@ export function useDeleteMyToken() {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: subscriptionKeys.myLiveToken() });
-      toast.success("Card removed");
+      queryClient.invalidateQueries({ queryKey: subscriptionKeys.myToken() });
+      toast.success("Payment method removed");
     },
     onError: (error) => {
-      toast.error(getErrorMessage(error, "Failed to remove card"));
+      toast.error(getErrorMessage(error, "Failed to remove payment method"));
     },
   });
 }

@@ -1,6 +1,7 @@
 import * as React from "react";
 import {
   createBrowserRouter,
+  Route,
   RouterProvider,
 } from "react-router-dom";
 
@@ -9,10 +10,10 @@ import "./App.css";
 import RootLayout from "../src/layout/RootLayout";
 
 import LandingPage from "./pages/landing-page/landing";
-import About from "./pages/about/About";
 
-import OurProcess from "./pages/process/OurProcess";
-import Contact from "./pages/contact/Contact";
+
+
+
 import ComingSoon from "./components/ComingSoon";
 import VouchersPage from "./pages/dashboard/voucher-mgt/Voucher";
 import ReportsPage from "./pages/dashboard/reports/Reports";
@@ -31,6 +32,7 @@ import ProfilePage from "./pages/dashboard/my-profile/Profile";
 import PaymentStatusPage from "./pages/payment/VerifyPayment";
 import ForgotPasswordPage from "./pages/auth/ForgotPsw";
 import ResetPasswordPage from "./pages/auth/ResetPsw";
+import OnboardingTestPage from "./pages/tour-assistant/test";
 
 
 
@@ -47,7 +49,7 @@ const router = createBrowserRouter([
 
       { path: "/payment/:status", element: <PaymentStatusPage /> },
 
-      { path: "/about", element: <About /> },
+
       { path: "/voucher", element: <VouchersPage /> },
       { path: "/reports", element: <ReportsPage /> },
       { path: "/departments", element: <DepartmentsPage /> },
@@ -60,10 +62,12 @@ const router = createBrowserRouter([
       { path: "/voucher-types", element: <VoucherTypesPage /> },
       { path: "/billings", element: <BillingPage /> },
 
-      { path: "/process", element: <OurProcess /> },
-      { path: "/contact", element: <Contact /> },
+
+
       { path: "/settings", element: <SettingsPage /> },
       { path: "/profile", element: <ProfilePage /> },
+
+      { path: "/test", element: <OnboardingTestPage />} , 
 
       { path: "*", element: <ComingSoon /> },
     ],

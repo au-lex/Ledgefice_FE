@@ -21,18 +21,18 @@ export interface AccountLookupResult {
   account_name: string;
 }
 
+// Matches the Go MandateStatus enum — lowercase, unlike Nomba's capitalized
+// "Active"/"Failed"/"Rejected" strings.
 export type MandateStatus = "" | "pending" | "active" | "failed";
 
 export interface MandateStatusResponse {
-  mandate_id: string;
-  mandate_status: string; // Nomba's raw capitalized string, e.g. "Active"
-  rejection_comment?: string;
+  mandate_status: MandateStatus;
+  channel: string; // "" | "card" | "direct_debit" | "bank_transfer"
 }
 
-export interface CreateMandateResponse {
-  mandate_id: string;
+export interface InitiateMandateResponse {
   status: "pending";
-  description: string; // NIBSS token-payment instructions to show the customer
+  redirect_url: string; // send the customer here to authenticate with their bank
 }
 
 // ── Payloads ───────────────────────────────────────────────────────────────
@@ -42,11 +42,14 @@ export interface LookupAccountPayload {
   bank_code: string;
 }
 
-export interface CreateMandatePayload {
+// Paystack resolves the account name itself during the bank redirect flow,
+// so unlike Nomba's mandate API, we only need to hand it the bank details —
+// account_name/phone_number aren't required by the backend anymore. Keep
+// useLookupAccount() in the UI purely for the "is this you?" confirmation
+// step before calling this.
+export interface InitiateMandatePayload {
   account_number: string;
   bank_code: string;
-  account_name: string; // resolved name from useLookupAccount, confirmed by the user
-  phone_number: string; // required by Nomba's mandate API
 }
 
 // ── Query Keys ─────────────────────────────────────────────────────────────
@@ -98,8 +101,10 @@ export function useLookupAccount() {
   });
 }
 
-// Only fetch once you actually have a mandate to poll (e.g. right after
-// creating one) — pass enabled accordingly.
+// Only fetch once you actually have a mandate to poll (e.g. right after the
+// customer returns from the bank redirect) — pass enabled accordingly. This
+// polls OUR db, which only updates once Paystack's webhook lands — there's
+// no live status endpoint on Paystack's side to hit directly, unlike Nomba.
 export function useMandateStatus(enabled = true) {
   return useQuery<MandateStatusResponse, AxiosError<APIError>>({
     queryKey: mandateKeys.status(),
@@ -110,37 +115,40 @@ export function useMandateStatus(enabled = true) {
       return data;
     },
     enabled,
-    // handy for polling right after creation while it's still "pending"
+    // handy for polling right after the customer returns from the bank redirect
     refetchInterval: (query) =>
-      query.state.data?.mandate_status === "Active" ||
-      query.state.data?.mandate_status === "Failed" ||
-      query.state.data?.mandate_status === "Rejected"
+      query.state.data?.mandate_status === "active" ||
+      query.state.data?.mandate_status === "failed"
         ? false
         : 5000,
   });
 }
 
-export function useCreateMandate() {
+export function useInitiateMandate() {
   const queryClient = useQueryClient();
 
   return useMutation<
-    CreateMandateResponse,
+    InitiateMandateResponse,
     AxiosError<APIError>,
-    CreateMandatePayload
+    InitiateMandatePayload
   >({
     mutationFn: async (payload) => {
-      const { data } = await api.post<CreateMandateResponse>(
+      const { data } = await api.post<InitiateMandateResponse>(
         "/mandates",
         payload,
       );
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: mandateKeys.status() });
-      toast.success("Mandate created — complete authentication with your bank");
+      toast.success("Redirecting you to your bank to authorize...");
+      // Caller is responsible for actually navigating:
+      //   window.location.href = data.redirect_url;
+      // left out of the hook itself so the UI can show a brief transition
+      // state first if it wants to.
     },
     onError: (error) => {
-      toast.error(getErrorMessage(error, "Failed to create mandate"));
+      toast.error(getErrorMessage(error, "Failed to start mandate"));
     },
   });
 }
