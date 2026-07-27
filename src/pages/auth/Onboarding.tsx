@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import {
     Building,
@@ -14,19 +14,52 @@ import {
 } from "iconsax-react";
 import Logo from "../../components/Logo";
 import { useSetupWorkspace } from "../../api/hooks/useOnboarding";
+import { usePlans, type PlanConfig, type PlanFeatures } from "../../api/hooks/usePlan";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type PlanOption = "starter" | "business" | "enterprise";
 
-const PLAN_OPTIONS: { value: PlanOption; label: string; blurb: string }[] = [
-    { value: "starter", label: "Starter", blurb: "Free — up to 3 departments, 15 users" },
-    { value: "business", label: "Business", blurb: "₦45,000/mo — multi-step approvals, full reporting" },
-    { value: "enterprise", label: "Enterprise", blurb: "Custom pricing — unlimited departments & users" },
-];
+const PLAN_ORDER: PlanOption[] = ["starter", "business", "enterprise"];
 
 function isPlanOption(value: string | null): value is PlanOption {
     return value === "starter" || value === "business" || value === "enterprise";
+}
+
+// ─── Pricing helpers ──────────────────────────────────────────────────────────
+
+function formatPrice(kobo: number): string {
+    if (kobo === 0) return "Custom pricing";
+    const naira = kobo / 100;
+    return `₦${naira.toLocaleString("en-NG")}/mo`;
+}
+
+const FEATURE_LABELS: Record<keyof PlanFeatures, string> = {
+    multi_step_approvals: "multi-step approvals",
+    department_permissions: "department permissions",
+    full_reporting_dashboard: "full reporting",
+    audit_log_export: "audit log export",
+    priority_support: "priority support",
+};
+
+function buildBlurb(cfg: PlanConfig): string {
+    const price = formatPrice(cfg.monthly_price);
+
+    if (cfg.monthly_price === 0) {
+        return `${price} — unlimited departments & users`;
+    }
+
+    const highlights = Object.entries(cfg.features)
+        .filter(([, enabled]) => enabled)
+        .map(([key]) => FEATURE_LABELS[key as keyof PlanFeatures]);
+
+    if (highlights.length > 0) {
+        return `${price} — ${highlights.slice(0, 2).join(", ")}`;
+    }
+
+    const deptLabel = cfg.max_departments === -1 ? "unlimited departments" : `up to ${cfg.max_departments} departments`;
+    const userLabel = cfg.max_users === -1 ? "unlimited users" : `${cfg.max_users} users`;
+    return `${price} — ${deptLabel}, ${userLabel}`;
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -35,6 +68,8 @@ export default function OnboardingPage() {
     const [searchParams] = useSearchParams();
     const incomingPlan = searchParams.get("plan");
     const incomingBilling = searchParams.get("billing"); // "monthly" | "yearly" — carried for future use
+
+    const { data: plans, isLoading: plansLoading } = usePlans();
 
     const [organizationName, setOrganizationName] = useState("");
     const [email, setEmail] = useState("");
@@ -52,6 +87,15 @@ export default function OnboardingPage() {
     const [error, setError] = useState<string | null>(null);
 
     const { mutate: setupWorkspace, isPending: loading } = useSetupWorkspace();
+
+    const planOptions = useMemo(() => {
+        if (!plans) return [];
+        return PLAN_ORDER.map((value) => ({
+            value,
+            label: plans[value].name,
+            blurb: buildBlurb(plans[value]),
+        }));
+    }, [plans]);
 
     function handleLogoSelect(e: React.ChangeEvent<HTMLInputElement>) {
         const file = e.target.files?.[0];
@@ -97,7 +141,6 @@ export default function OnboardingPage() {
             },
             {
                 onSuccess: (data) => {
-
                     if (data.checkout_link) {
                         window.location.href = data.checkout_link;
                     } else {
@@ -252,36 +295,44 @@ export default function OnboardingPage() {
                     {/* Plan */}
                     <div>
                         <label className="block text-xs font-medium text-zinc-400 mb-2">Plan</label>
-                        <div className="space-y-2">
-                            {PLAN_OPTIONS.map((opt) => (
-                                <label
-                                    key={opt.value}
-                                    className={`flex items-start gap-3 border rounded-lg px-3.5 py-3 cursor-pointer transition-all ${plan === opt.value
-                                            ? "border-zinc-500 bg-zinc-800/50"
-                                            : "border-zinc-800 hover:border-zinc-700"
-                                        }`}
-                                >
-                                    <input
-                                        type="radio"
-                                        name="plan"
-                                        value={opt.value}
-                                        checked={plan === opt.value}
-                                        onChange={() => setPlan(opt.value)}
-                                        className="mt-0.5 accent-zinc-300"
-                                    />
-                                    <div>
-                                        <p className="text-sm font-medium text-zinc-100">{opt.label}</p>
-                                        <p className="text-xs text-zinc-500">{opt.blurb}</p>
-                                    </div>
-                                </label>
-                            ))}
-                        </div>
+                        {plansLoading ? (
+                            <div className="space-y-2">
+                                {PLAN_ORDER.map((p) => (
+                                    <div key={p} className="h-14 rounded-lg border border-zinc-800 bg-zinc-900/40 animate-pulse" />
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="space-y-2">
+                                {planOptions.map((opt) => (
+                                    <label
+                                        key={opt.value}
+                                        className={`flex items-start gap-3 border rounded-lg px-3.5 py-3 cursor-pointer transition-all ${plan === opt.value
+                                                ? "border-zinc-500 bg-zinc-800/50"
+                                                : "border-zinc-800 hover:border-zinc-700"
+                                            }`}
+                                    >
+                                        <input
+                                            type="radio"
+                                            name="plan"
+                                            value={opt.value}
+                                            checked={plan === opt.value}
+                                            onChange={() => setPlan(opt.value)}
+                                            className="mt-0.5 accent-zinc-300"
+                                        />
+                                        <div>
+                                            <p className="text-sm font-medium text-zinc-100">{opt.label}</p>
+                                            <p className="text-xs text-zinc-500">{opt.blurb}</p>
+                                        </div>
+                                    </label>
+                                ))}
+                            </div>
+                        )}
                     </div>
 
                     {/* Submit */}
                     <button
                         type="submit"
-                        disabled={loading}
+                        disabled={loading || plansLoading}
                         className="w-full flex items-center justify-center gap-2 bg-zinc-100 hover:bg-white text-zinc-950 text-sm font-medium px-4 py-3 rounded-lg transition-all shadow-sm disabled:opacity-60 disabled:cursor-not-allowed mt-2"
                     >
                         {loading ? (

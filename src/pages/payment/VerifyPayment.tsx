@@ -1,4 +1,4 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams, useParams, Link } from "react-router-dom";
 import { TickCircle, CloseCircle, Clock } from "iconsax-react";
 import api from "../../api/lib/axios";
@@ -52,7 +52,10 @@ export default function PaymentStatusPage() {
             <div className="w-full max-w-sm bg-pri border border-zinc-800 rounded-xl p-7 text-center space-y-4">
                 {display === "pending" && (
                     <>
-                        <Clock size={36} color="currentColor" className="text-zinc-500 mx-auto animate-pulse" />
+                        <div className="relative w-12 h-12 mx-auto flex items-center justify-center">
+                            <span className="absolute inset-0 rounded-full border-2 border-zinc-800 border-t-zinc-300 animate-spin" />
+                            <Clock size={20} color="currentColor" className="text-zinc-500" />
+                        </div>
                         <h1 className="text-lg font-medium text-zinc-100">Confirming payment…</h1>
                         <p className="text-xs text-zinc-500">Hang tight, this usually takes a few seconds.</p>
                     </>
