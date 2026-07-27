@@ -139,13 +139,10 @@ export function useInitiateMandate() {
       );
       return data;
     },
-    onSuccess: (data) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: mandateKeys.status() });
       toast.success("Redirecting you to your bank to authorize...");
-      // Caller is responsible for actually navigating:
-      //   window.location.href = data.redirect_url;
-      // left out of the hook itself so the UI can show a brief transition
-      // state first if it wants to.
+
     },
     onError: (error) => {
       toast.error(getErrorMessage(error, "Failed to start mandate"));

@@ -9,6 +9,7 @@ import { AxiosError } from "axios";
 import toast from "react-hot-toast";
 import api from "../lib/axios";
 import type { APIError } from "../lib/types";
+import type { ReactNode } from "react";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -103,6 +104,7 @@ export interface SavedPaymentMethod {
 }
 
 export interface MyTokenResponse {
+  card_pan: ReactNode;
   has_token: boolean;
   subscription_id?: string;
   channel?: string;
