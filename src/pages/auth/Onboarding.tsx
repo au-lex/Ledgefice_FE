@@ -11,6 +11,7 @@ import {
     CloseCircle,
     ArrowRight,
     Warning2,
+    Whatsapp,
 } from "iconsax-react";
 import Logo from "../../components/Logo";
 import { useSetupWorkspace } from "../../api/hooks/useOnboarding";
@@ -21,6 +22,9 @@ import { usePlans, type PlanConfig, type PlanFeatures } from "../../api/hooks/us
 type PlanOption = "starter" | "business" | "enterprise";
 
 const PLAN_ORDER: PlanOption[] = ["starter", "business", "enterprise"];
+
+const ENTERPRISE_WHATSAPP_NUMBER = "+2348158772715"; // TODO: replace with real number (international format, no +)
+const ENTERPRISE_WHATSAPP_MESSAGE = "Hi, I'm interested in the Enterprise plan for VMS.";
 
 function isPlanOption(value: string | null): value is PlanOption {
     return value === "starter" || value === "business" || value === "enterprise";
@@ -62,6 +66,14 @@ function buildBlurb(cfg: PlanConfig): string {
     return `${price} — ${deptLabel}, ${userLabel}`;
 }
 
+function buildWhatsappLink(orgName: string, workers: string): string {
+    const lines = [ENTERPRISE_WHATSAPP_MESSAGE];
+    if (orgName.trim()) lines.push(`Organization: ${orgName.trim()}`);
+    if (workers.trim()) lines.push(`Team size: ${workers.trim()}`);
+    const text = encodeURIComponent(lines.join("\n"));
+    return `https://wa.me/${ENTERPRISE_WHATSAPP_NUMBER}?text=${text}`;
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function OnboardingPage() {
@@ -87,6 +99,8 @@ export default function OnboardingPage() {
     const [error, setError] = useState<string | null>(null);
 
     const { mutate: setupWorkspace, isPending: loading } = useSetupWorkspace();
+
+    const isEnterprise = plan === "enterprise";
 
     const planOptions = useMemo(() => {
         if (!plans) return [];
@@ -118,6 +132,7 @@ export default function OnboardingPage() {
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
+        if (isEnterprise) return; // enterprise routes to WhatsApp, never submits the form
         setError(null);
 
         if (!organizationName.trim() || !email.trim() || !password.trim() || !numberOfWorkers.trim()) {
@@ -183,114 +198,116 @@ export default function OnboardingPage() {
                     </div>
 
                     {/* Logo (optional) */}
-                    <div>
-                        <label className="block text-xs font-medium text-zinc-400 mb-2">
-                            Organization Logo <span className="text-zinc-600">(optional)</span>
-                        </label>
-                        <div className="flex items-center gap-4">
-                            <div className="relative w-16 h-16 rounded-full bg-zinc-950 border border-zinc-800 flex items-center justify-center overflow-hidden flex-shrink-0">
-                                {logoPreview ? (
-                                    <>
-                                        <img src={logoPreview} alt="Logo preview" className="w-full h-full object-cover" />
-                                        <button
-                                            type="button"
-                                            onClick={removeLogo}
-                                            className="absolute -top-1.5 -right-1.5 bg-zinc-900 border border-zinc-700 rounded-full text-zinc-400 hover:text-red-400 transition-colors"
-                                        >
-                                            <CloseCircle size={16} color="currentColor" />
-                                        </button>
-                                    </>
-                                ) : (
-                                    <Building size={22} color="currentColor" className="text-zinc-700" />
-                                )}
+                    <fieldset disabled={isEnterprise} className={isEnterprise ? "opacity-40 pointer-events-none" : undefined}>
+                        <div>
+                            <label className="block text-xs font-medium text-zinc-400 mb-2">
+                                Organization Logo <span className="text-zinc-600">(optional)</span>
+                            </label>
+                            <div className="flex items-center gap-4">
+                                <div className="relative w-16 h-16 rounded-full bg-zinc-950 border border-zinc-800 flex items-center justify-center overflow-hidden flex-shrink-0">
+                                    {logoPreview ? (
+                                        <>
+                                            <img src={logoPreview} alt="Logo preview" className="w-full h-full object-cover" />
+                                            <button
+                                                type="button"
+                                                onClick={removeLogo}
+                                                className="absolute -top-1.5 -right-1.5 bg-zinc-900 border border-zinc-700 rounded-full text-zinc-400 hover:text-red-400 transition-colors"
+                                            >
+                                                <CloseCircle size={16} color="currentColor" />
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <Building size={22} color="currentColor" className="text-zinc-700" />
+                                    )}
+                                </div>
+
+                                <button
+                                    type="button"
+                                    onClick={() => fileInputRef.current?.click()}
+                                    className="flex items-center gap-1.5 text-xs font-medium text-zinc-300 border border-zinc-800 hover:border-zinc-600 hover:bg-zinc-800/50 rounded-lg px-3.5 py-2 transition-all"
+                                >
+                                    <GalleryAdd size={14} color="currentColor" />
+                                    {logo ? "Change image" : "Upload image"}
+                                </button>
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleLogoSelect}
+                                    className="hidden"
+                                />
                             </div>
-
-                            <button
-                                type="button"
-                                onClick={() => fileInputRef.current?.click()}
-                                className="flex items-center gap-1.5 text-xs font-medium text-zinc-300 border border-zinc-800 hover:border-zinc-600 hover:bg-zinc-800/50 rounded-lg px-3.5 py-2 transition-all"
-                            >
-                                <GalleryAdd size={14} color="currentColor" />
-                                {logo ? "Change image" : "Upload image"}
-                            </button>
-                            <input
-                                ref={fileInputRef}
-                                type="file"
-                                accept="image/*"
-                                onChange={handleLogoSelect}
-                                className="hidden"
-                            />
                         </div>
-                    </div>
 
-                    {/* Organization Name */}
-                    <div>
-                        <label className="block text-xs font-medium text-zinc-400 mb-1.5">Organization Name</label>
-                        <div className="relative">
-                            <Building size={16} color="currentColor" className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500" />
-                            <input
-                                value={organizationName}
-                                onChange={(e) => setOrganizationName(e.target.value)}
-                                placeholder="e.g. Bridgeworks Nigeria Ltd."
-                                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg pl-10 pr-3 py-3 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 transition-all font-medium"
-                            />
+                        {/* Organization Name */}
+                        <div className="mt-5">
+                            <label className="block text-xs font-medium text-zinc-400 mb-1.5">Organization Name</label>
+                            <div className="relative">
+                                <Building size={16} color="currentColor" className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500" />
+                                <input
+                                    value={organizationName}
+                                    onChange={(e) => setOrganizationName(e.target.value)}
+                                    placeholder="e.g. Bridgeworks Nigeria Ltd."
+                                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg pl-10 pr-3 py-3 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 transition-all font-medium"
+                                />
+                            </div>
                         </div>
-                    </div>
 
-                    {/* Email */}
-                    <div>
-                        <label className="block text-xs font-medium text-zinc-400 mb-1.5">Email Address</label>
-                        <div className="relative">
-                            <Sms size={16} color="currentColor" className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500" />
-                            <input
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                placeholder="you@company.com"
-                                autoComplete="email"
-                                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg pl-10 pr-3 py-3 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 transition-all"
-                            />
+                        {/* Email */}
+                        <div className="mt-5">
+                            <label className="block text-xs font-medium text-zinc-400 mb-1.5">Email Address</label>
+                            <div className="relative">
+                                <Sms size={16} color="currentColor" className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500" />
+                                <input
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="you@company.com"
+                                    autoComplete="email"
+                                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg pl-10 pr-3 py-3 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 transition-all"
+                                />
+                            </div>
                         </div>
-                    </div>
 
-                    {/* Password */}
-                    <div>
-                        <label className="block text-xs font-medium text-zinc-400 mb-1.5">Password</label>
-                        <div className="relative">
-                            <Lock1 size={16} color="currentColor" className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500" />
-                            <input
-                                type={showPassword ? "text" : "password"}
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                placeholder="At least 8 characters"
-                                autoComplete="new-password"
-                                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg pl-10 pr-10 py-3 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 transition-all"
-                            />
-                            <button
-                                type="button"
-                                onClick={() => setShowPassword((s) => !s)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition-colors"
-                            >
-                                {showPassword ? <EyeSlash size={16} color="currentColor" /> : <Eye size={16} color="currentColor" />}
-                            </button>
+                        {/* Password */}
+                        <div className="mt-5">
+                            <label className="block text-xs font-medium text-zinc-400 mb-1.5">Password</label>
+                            <div className="relative">
+                                <Lock1 size={16} color="currentColor" className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500" />
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    placeholder="At least 8 characters"
+                                    autoComplete="new-password"
+                                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg pl-10 pr-10 py-3 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 transition-all"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword((s) => !s)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition-colors"
+                                >
+                                    {showPassword ? <EyeSlash size={16} color="currentColor" /> : <Eye size={16} color="currentColor" />}
+                                </button>
+                            </div>
                         </div>
-                    </div>
 
-                    {/* Number of workers */}
-                    <div>
-                        <label className="block text-xs font-medium text-zinc-400 mb-1.5">Number of Workers</label>
-                        <div className="relative">
-                            <Profile2User size={16} color="currentColor" className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500" />
-                            <input
-                                type="number"
-                                min={1}
-                                value={numberOfWorkers}
-                                onChange={(e) => setNumberOfWorkers(e.target.value)}
-                                placeholder="e.g. 25"
-                                className="w-full bg-zinc-950 border border-zinc-800 rounded-lg pl-10 pr-3 py-3 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 transition-all"
-                            />
+                        {/* Number of workers */}
+                        <div className="mt-5">
+                            <label className="block text-xs font-medium text-zinc-400 mb-1.5">Number of Workers</label>
+                            <div className="relative">
+                                <Profile2User size={16} color="currentColor" className="absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500" />
+                                <input
+                                    type="number"
+                                    min={1}
+                                    value={numberOfWorkers}
+                                    onChange={(e) => setNumberOfWorkers(e.target.value)}
+                                    placeholder="e.g. 25"
+                                    className="w-full bg-zinc-950 border border-zinc-800 rounded-lg pl-10 pr-3 py-3 text-sm text-zinc-100 placeholder-zinc-600 focus:outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600 transition-all"
+                                />
+                            </div>
                         </div>
-                    </div>
+                    </fieldset>
 
                     {/* Plan */}
                     <div>
@@ -329,24 +346,36 @@ export default function OnboardingPage() {
                         )}
                     </div>
 
-                    {/* Submit */}
-                    <button
-                        type="submit"
-                        disabled={loading || plansLoading}
-                        className="w-full flex items-center justify-center gap-2 bg-zinc-100 hover:bg-white text-zinc-950 text-sm font-medium px-4 py-3 rounded-lg transition-all shadow-sm disabled:opacity-60 disabled:cursor-not-allowed mt-2"
-                    >
-                        {loading ? (
-                            <>
-                                <span className="w-3.5 h-3.5 border-2 border-zinc-950/30 border-t-zinc-950 rounded-full animate-spin" />
-                                Setting up...
-                            </>
-                        ) : (
-                            <>
-                                Complete Setup
-                                <ArrowRight size={15} color="currentColor" />
-                            </>
-                        )}
-                    </button>
+                    {/* Submit — swapped for WhatsApp CTA on Enterprise */}
+                    {isEnterprise ? (
+                        <a
+                            href={buildWhatsappLink(organizationName, numberOfWorkers)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 text-sm font-medium px-4 py-3 rounded-lg transition-all shadow-sm mt-2"
+                        >
+                            <Whatsapp size={16} color="currentColor" />
+                            Chat with us on WhatsApp
+                        </a>
+                    ) : (
+                        <button
+                            type="submit"
+                            disabled={loading || plansLoading}
+                            className="w-full flex items-center justify-center gap-2 bg-zinc-100 hover:bg-white text-zinc-950 text-sm font-medium px-4 py-3 rounded-lg transition-all shadow-sm disabled:opacity-60 disabled:cursor-not-allowed mt-2"
+                        >
+                            {loading ? (
+                                <>
+                                    <span className="w-3.5 h-3.5 border-2 border-zinc-950/30 border-t-zinc-950 rounded-full animate-spin" />
+                                    Setting up...
+                                </>
+                            ) : (
+                                <>
+                                    Complete Setup
+                                    <ArrowRight size={15} color="currentColor" />
+                                </>
+                            )}
+                        </button>
+                    )}
                 </form>
 
                 <p className="text-[11px] text-zinc-600 text-center mt-6">
