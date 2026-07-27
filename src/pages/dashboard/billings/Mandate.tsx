@@ -1,69 +1,26 @@
 import { useState } from "react";
-import toast from "react-hot-toast";
-import { CloseCircle, Copy, Bank as BankIcon, TickCircle } from "iconsax-react";
+import { CloseCircle, Bank as BankIcon, TickCircle } from "iconsax-react";
 import {
   useListBanks,
   useLookupAccount,
-  useCreateMandate,
+  useInitiateMandate,
 } from "../../../api/hooks/useMandates";
 
-type Step = "form" | "confirm" | "done";
-
-interface ParsedMandateAccount {
-  accountNumber: string;
-  bankName: string;
-  accountName: string;
-}
-
-interface ParsedMandateInstructions {
-  amount: string | null;
-  accounts: ParsedMandateAccount[];
-  raw: string;
-}
-
-function parseMandateInstructions(description: string): ParsedMandateInstructions {
-  const amountMatch = description.match(/₦\s?([\d,]+\.?\d*)/);
-  const amount = amountMatch ? amountMatch[1] : null;
-
-  const accountRegex =
-    /Account Number:\s*(\d+)\s*Bank:\s*(.+?)\s*Account Name:\s*(.+?)(?=\s*OR\s*Account Number|$)/gs;
-
-  const accounts: ParsedMandateAccount[] = [];
-  let match: RegExpExecArray | null;
-  while ((match = accountRegex.exec(description)) !== null) {
-    accounts.push({
-      accountNumber: match[1].trim(),
-      bankName: match[2].trim(),
-      accountName: match[3].trim(),
-    });
-  }
-
-  return { amount, accounts, raw: description };
-}
-
-function copyToClipboard(value: string, label: string) {
-  navigator.clipboard
-    .writeText(value)
-    .then(() => toast.success(`${label} copied`))
-    .catch(() => toast.error("Failed to copy"));
-}
+type Step = "form" | "confirm" | "redirecting";
 
 export default function MandateSetupModal({ onClose }: { onClose: () => void }) {
   const [step, setStep] = useState<Step>("form");
   const [bankCode, setBankCode] = useState("");
   const [accountNumber, setAccountNumber] = useState("");
   const [accountName, setAccountName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [instructions, setInstructions] = useState<ParsedMandateInstructions | null>(null);
 
   const { data: banks, isLoading: banksLoading } = useListBanks();
   const lookup = useLookupAccount();
-  const createMandate = useCreateMandate();
+  const initiateMandate = useInitiateMandate();
 
   const selectedBankName = banks?.find((b) => b.code === bankCode)?.name ?? "";
 
-  const canContinue =
-    !!bankCode && accountNumber.length >= 10 && phoneNumber.length >= 10;
+  const canContinue = !!bankCode && accountNumber.length >= 10;
 
   const handleLookup = () => {
     if (!canContinue) return;
@@ -79,17 +36,16 @@ export default function MandateSetupModal({ onClose }: { onClose: () => void }) 
   };
 
   const handleCreate = () => {
-    createMandate.mutate(
-      {
-        account_number: accountNumber,
-        bank_code: bankCode,
-        account_name: accountName,
-        phone_number: phoneNumber,
-      },
+    initiateMandate.mutate(
+      { account_number: accountNumber, bank_code: bankCode },
       {
         onSuccess: (res) => {
-          setInstructions(parseMandateInstructions(res.description));
-          setStep("done");
+          // Paystack's mandate flow is a bank-hosted authentication page —
+          // there's no in-app instructions step like Nomba's NIBSS
+          // token-payment. The browser leaves the app here; mandate status
+          // gets confirmed later via the webhook once they come back.
+          setStep("redirecting");
+          window.location.href = res.redirect_url;
         },
       },
     );
@@ -101,7 +57,11 @@ export default function MandateSetupModal({ onClose }: { onClose: () => void }) 
 
         <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800 bg-zinc-900/50 shrink-0">
           <h2 className="text-sm font-medium text-zinc-100">Set Up Auto-Renewal</h2>
-          <button onClick={onClose} className="text-zinc-500 hover:text-zinc-300 transition-colors">
+          <button
+            onClick={onClose}
+            disabled={step === "redirecting"}
+            className="text-zinc-500 hover:text-zinc-300 transition-colors disabled:opacity-40"
+          >
             <CloseCircle size={20} color="currentColor" />
           </button>
         </div>
@@ -111,7 +71,7 @@ export default function MandateSetupModal({ onClose }: { onClose: () => void }) 
           {step === "form" && (
             <>
               <p className="text-xs text-zinc-400 leading-relaxed">
-                Link a bank account for Direct Debit. You'll authenticate a small NIBSS token payment with your bank to activate it.
+                Link a bank account for Direct Debit. You'll be sent to your bank to authorize it — no card required.
               </p>
 
               <div>
@@ -146,24 +106,6 @@ export default function MandateSetupModal({ onClose }: { onClose: () => void }) 
                 />
               </div>
 
-              <div>
-                <label className="block text-[11px] font-medium text-zinc-500 uppercase tracking-widest mb-1.5">
-                  Phone Number
-                </label>
-                <input
-                  type="tel"
-                  inputMode="numeric"
-                  maxLength={11}
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, ""))}
-                  placeholder="08012345678"
-                  className="w-full px-3 py-2.5 rounded-lg border border-zinc-800 bg-zinc-950 text-sm text-zinc-200 placeholder-zinc-600 outline-none focus:border-zinc-600 transition-colors font-medium"
-                />
-                <p className="text-[10px] text-zinc-500 mt-1.5">
-                  Required by your bank to authenticate the mandate.
-                </p>
-              </div>
-
               <div className="pt-2">
                 <button
                   onClick={handleLookup}
@@ -189,97 +131,37 @@ export default function MandateSetupModal({ onClose }: { onClose: () => void }) 
               </div>
 
               <p className="text-xs text-zinc-400 leading-relaxed">
-                You'll receive a small token-payment request from your bank to authenticate this mandate — check your bank app after confirming.
+                You'll be redirected to your bank to authorize this mandate. Come back here once you're done — it'll show as active within a few seconds.
               </p>
 
               <div className="flex gap-3 pt-2">
                 <button
                   onClick={() => setStep("form")}
-                  className="flex-1 py-2.5 rounded-lg border border-zinc-700 text-sm font-medium text-zinc-300 hover:bg-zinc-800 transition-all"
+                  disabled={initiateMandate.isPending}
+                  className="flex-1 py-2.5 rounded-lg border border-zinc-700 text-sm font-medium text-zinc-300 hover:bg-zinc-800 transition-all disabled:opacity-40"
                 >
                   Back
                 </button>
                 <button
                   onClick={handleCreate}
-                  disabled={createMandate.isPending}
+                  disabled={initiateMandate.isPending}
                   className="flex-1 py-2.5 rounded-lg bg-zinc-100 text-zinc-900 text-sm font-medium hover:bg-white transition-all disabled:opacity-40 shadow-sm"
                 >
-                  {createMandate.isPending ? "Creating…" : "Confirm & Link"}
+                  {initiateMandate.isPending ? "Preparing…" : "Continue to Bank"}
                 </button>
               </div>
             </>
           )}
 
-          {step === "done" && instructions && (
-            <div className="space-y-5">
-              <div className="text-center space-y-2">
-                <div className="w-12 h-12 mx-auto rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-3">
-                  <TickCircle size={24} color="currentColor" variant="Bulk" />
-                </div>
-                <p className="text-sm font-medium text-zinc-100">
-                  {instructions.amount
-                    ? `Send ₦${instructions.amount} to authenticate`
-                    : "Authentication Required"}
-                </p>
-                <p className="text-[11px] text-zinc-400 leading-relaxed px-2">
-                  Send this exact amount from the account you just linked, using your bank's app or internet banking. Choose either option below.
-                </p>
+          {step === "redirecting" && (
+            <div className="text-center space-y-3 py-4">
+              <div className="w-12 h-12 mx-auto rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                <TickCircle size={24} color="currentColor" variant="Bulk" />
               </div>
-
-              {instructions.accounts.length > 0 ? (
-                <div className="space-y-3">
-                  {instructions.accounts.map((acc, i) => (
-                    <div
-                      key={i}
-                      className="p-4 bg-zinc-800/40 rounded-lg border border-zinc-700/50 hover:border-zinc-600 transition-colors"
-                    >
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-1.5 text-[10px] font-medium text-zinc-500 uppercase tracking-widest">
-                          <BankIcon size={14} color="currentColor" />
-                          {acc.bankName}
-                        </div>
-                        {instructions.accounts.length > 1 && (
-                          <span className="text-[9px] font-medium text-zinc-500 uppercase tracking-widest">
-                            Option {i + 1}
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm font-semibold text-zinc-100 font-mono tracking-wide">
-                            {acc.accountNumber}
-                          </p>
-                          <p className="text-[11px] text-zinc-400 mt-0.5">
-                            {acc.accountName}
-                          </p>
-                        </div>
-                        <button
-                          onClick={() => copyToClipboard(acc.accountNumber, "Account number")}
-                          className="p-2.5 text-zinc-500 hover:text-zinc-200 hover:bg-zinc-700 rounded-lg transition-colors shrink-0"
-                          title="Copy account number"
-                        >
-                          <Copy size={16} color="currentColor" />
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="p-4 bg-zinc-800/40 rounded-lg border border-zinc-700/50">
-                  <p className="text-xs text-zinc-300 leading-relaxed whitespace-pre-wrap">
-                    {instructions.raw}
-                  </p>
-                </div>
-              )}
-
-              <div className="pt-2">
-                <button
-                  onClick={onClose}
-                  className="w-full py-2.5 rounded-lg bg-zinc-100 text-zinc-900 text-sm font-medium hover:bg-white transition-all shadow-sm"
-                >
-                  Done
-                </button>
-              </div>
+              <p className="text-sm font-medium text-zinc-100">Taking you to your bank…</p>
+              <p className="text-[11px] text-zinc-400">
+                If nothing happens, check your browser's pop-up blocker.
+              </p>
             </div>
           )}
 
